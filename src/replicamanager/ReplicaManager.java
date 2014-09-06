@@ -16,8 +16,10 @@ public class ReplicaManager {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        connection_control adminBD =connection_control.getInstance();
-        adminBD.consultarEmpleados();
+        //connection_control adminBD =connection_control.getInstance();
+        //adminBD.consultarEmpleados();
+        hiloPrueba t = new hiloPrueba();
+        new Thread(t).start();
         
         
     }

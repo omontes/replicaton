@@ -23,22 +23,28 @@ import java.sql.Statement;
 public class connection_control {
     private Connection conection;
     private Statement statement;
-    private static connection_control AdminBD;
-
+    private static connection_control AdminBDSQLSERVER;
+    private static connection_control AdminBDMYSQL;
     public connection_control(Connection conection, Statement statement) {
         this.conection = conection;
         this.statement = statement;
 
     }
 
-    public static connection_control getInstance() {
-        if (AdminBD == null) {
-            setting_upDB setting = new setting_upDB();
-            AdminBD = new connection_control(setting.getConection(), setting.getStatement());
+    public static connection_control getInstanceSQLServer() {
+        if (AdminBDSQLSERVER == null) {
+            Setting_upDBSqlServer setting = new Setting_upDBSqlServer();
+            AdminBDSQLSERVER = new connection_control(setting.getConection(), setting.getStatement());
         }
-        return AdminBD;
+        return AdminBDSQLSERVER;
     }
-    
+    public static connection_control getInstanceMySQLServer() {
+        if (AdminBDMYSQL == null) {
+            Setting_upDBMysql setting = new Setting_upDBMysql();
+            AdminBDMYSQL = new connection_control(setting.getConection(), setting.getStatement());
+        }
+        return AdminBDMYSQL;
+    }
     private String readSql(String filePath) throws IOException {
         InputStream inputfile = connection_control.class.getClass().getResourceAsStream(filePath);
         StringBuilder sb;

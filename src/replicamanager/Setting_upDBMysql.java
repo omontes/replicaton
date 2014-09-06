@@ -17,14 +17,13 @@ import javax.swing.JOptionPane;
  *
  * @author Oscar Montes
  */
-public class setting_upDB {
-    
- /**
+public class Setting_upDBMysql {
+    /**
      * Parametros de conexion
      */
-    private String driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
-    private String database = "jdbc:sqlserver://OSCARMONTES-HP;instanceName=SQLSERVER;databaseName=db";
-    private String user = "sa";
+    private String driver = "com.mysql.jdbc.Driver";
+    private String database = "jdbc:mysql://localhost:3306/company";
+    private String user = "root";
     private String pass = "123456";
     private Connection conection;
     private Statement statement;
@@ -33,7 +32,7 @@ public class setting_upDB {
     /**
      * Intenta la conexion a la Base de Datos
      */
-    public setting_upDB() {
+    public Setting_upDBMysql()  {
         try {
             Class.forName(driver);
             this.setConection(DriverManager.getConnection(database, user, pass));
@@ -76,3 +75,4 @@ public class setting_upDB {
     }
 
 }
+
