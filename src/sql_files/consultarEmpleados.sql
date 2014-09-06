@@ -1,0 +1,2 @@
+SELECT Fname
+FROM Employee;
