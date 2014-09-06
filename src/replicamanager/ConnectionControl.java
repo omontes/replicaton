@@ -25,10 +25,12 @@ public class ConnectionControl {
     private Connection conection;
     private Statement statement;
     private static ConnectionControl AdminBD;
+    private boolean estado;
    
     public ConnectionControl(Connection conection, Statement statement) {
         this.conection = conection;
         this.statement = statement;
+        this.setEstado(true);
 
     }
 
@@ -119,6 +121,20 @@ public class ConnectionControl {
          
         
          
+    }
+
+    /**
+     * @return the estado
+     */
+    public boolean isEstado() {
+        return estado;
+    }
+
+    /**
+     * @param estado the estado to set
+     */
+    public void setEstado(boolean estado) {
+        this.estado = estado;
     }
 
 }

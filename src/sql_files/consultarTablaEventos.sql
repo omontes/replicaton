@@ -1,3 +1,3 @@
-SELECT id,entidad,tipoEvento
+SELECT id,entidad,tipoEvento,enable
 FROM logtable;
 

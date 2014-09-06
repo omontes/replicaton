@@ -33,12 +33,27 @@ public class ControlReplicasHilo implements Runnable {
                     int id = eventos.getInt("id");
                     String entidad= eventos.getString("entidad");
                     String tipoEvento = eventos.getString("tipoEvento");
-                    if (tipoEvento.equals("Inserccion")) {
+                    String enable= eventos.getString("enable");
+                    
+                    /****LISTA DE EVENTOS *****/
+                    if (tipoEvento.equals("Inserccion") && enable.equals("1")) {
                         this.insertarReplicas(id, entidad);
+                        
                     }
                     flag=false;
-                    
-                }}
+                    /****PROCESO DE LIMPIEZA DE TABLA PRIORIDAD ****/
+                    if(this.existeReplicaPausada()){
+                        /***** No puede borrar y tiene que
+                         * poner en cero los que esten en la lista de prioridad
+                         */
+                        System.out.println("hola osarcar");
+                    }
+                    else{
+                        /**Borrar los que esten en lista de prioridad**/
+                        System.out.println("jlj");
+                    }
+                }
+                }
             } catch (SQLException ex) {
                 Logger.getLogger(ControlReplicasHilo.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -46,11 +61,27 @@ public class ControlReplicasHilo implements Runnable {
             }
         }
 
+    
+    
+    
     private void insertarReplicas(int id, String entidad) {
+        
         for (int i = 0; i < this.controlRep.BasesReplicas.size(); i++) {
-
-            this.controlRep.BasesReplicas.get(i).insertarDatoReplica(id, entidad.toLowerCase());
+            if (this.controlRep.BasesReplicas.get(i).isEstado()) {
+                this.controlRep.BasesReplicas.get(i).insertarDatoReplica(id,
+                        entidad.toLowerCase());
+            }
         }
+    }
+
+    private boolean existeReplicaPausada() {
+        boolean existePausado = false;
+        for (int i = 0; i < this.controlRep.BasesReplicas.size(); i++) {
+            if (!this.controlRep.BasesReplicas.get(i).isEstado()) {
+                existePausado= true;
+            }
+        }
+        return existePausado;
     }
 
     
