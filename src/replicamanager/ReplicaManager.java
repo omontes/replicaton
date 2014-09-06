@@ -6,6 +6,10 @@
 
 package replicamanager;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
 /**
  *
  * @author Oscar Montes
@@ -15,11 +19,21 @@ public class ReplicaManager {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        //connection_control adminBD =connection_control.getInstance();
+    public static void main(String[] args) throws SQLException {
+        ConnectionControl adminBDOrigen = ConnectionControl.getInstanceSQLServer();
+        ConnectionControl adminBDC1 = ConnectionControl.getInstanceMySQLCompany();
+        ConnectionControl adminBDc2 = ConnectionControl.getInstanceMySQLCompany2();
+
+        ControlReplicas control = new ControlReplicas(adminBDOrigen);
+        control.agregarReplica(adminBDC1);
+        control.agregarReplica(adminBDc2);
+        ControlReplicasHilo hilo = new ControlReplicasHilo(control);
+        new Thread(hilo).start();
+        //ResultSet rs =adminBD.consultarTablaEventos();
+        //System.out.println(rs.next());
         //adminBD.consultarEmpleados();
-        hiloPrueba t = new hiloPrueba();
-        new Thread(t).start();
+        //HiloPrueba t = new HiloPrueba();
+        //new Thread(t).start();
         
         
     }
