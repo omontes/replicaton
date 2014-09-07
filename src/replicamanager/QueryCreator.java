@@ -31,15 +31,17 @@ public class QueryCreator {
        
         controlBase destination = controlBase.getConexion(mysql);
         controlBase connection = controlBase.getConexion(sqlserver);
+        
+        /***Cambiar el nombre del schema ****/
         ResultSet Entidades = connection.getAllTablas();
         while(Entidades.next()){
             String createTableQuery = "";
             int resultSetCounter = 1; //Posicion actual
-            int attributeAmount = this.getResultSetSize(connection.getAllAtributosDeTabla(Entidades.getString(3),"db")); //Cantidad de Atributos
+            int attributeAmount = this.getResultSetSize(connection.getAllAtributosDeTabla(Entidades.getString(3),"dbo")); //Cantidad de Atributos
             createTableQuery += "CREATE TABLE ";
             createTableQuery +=  Entidades.getString(3);
             createTableQuery += " ( ";
-            ResultSet Atributos = connection.getAllAtributosDeTabla(Entidades.getString(3),"db");
+            ResultSet Atributos = connection.getAllAtributosDeTabla(Entidades.getString(3),"dbo");
             while(Atributos.next()){
                 createTableQuery += Atributos.getString(1) + " ";
                 createTableQuery += Atributos.getString(2);
@@ -119,7 +121,7 @@ public class QueryCreator {
         int column = 1;//contador usado para iterar sobre las columnas
         while(resultset.next()){
             String insertData = "INSERT INTO " + tableName + " VALUES (";
-            ResultSet Atributos = connection.getAllAtributosDeTabla(tableName,"db"); //ResultSet usado para saber que tipo es el dato 
+            ResultSet Atributos = connection.getAllAtributosDeTabla(tableName,"dbo"); //ResultSet usado para saber que tipo es el dato 
             while(true){
                 try{
                     Atributos.next();

@@ -28,7 +28,7 @@ public class controlBase extends connection_control {
     public static controlBase getConexion(ConnectionFactory fabrica) {
          try {
                    Connection conexion = fabrica.getConnectionFactory();
-
+                   
                    adminBD = new controlBase(conexion, conexion.createStatement());
                 } catch (SQLException ex) {
                     Logger.getLogger(ReplicaManagerApp.class.getName()).log(Level.SEVERE, null, ex);
