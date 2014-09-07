@@ -187,11 +187,12 @@ public class connection_control {
     }
     
     //Metodo usado para obtener todas los atributos de una tabla especifica
-    ResultSet getAllAtributosDeTabla(String tableName) {
+    ResultSet getAllAtributosDeTabla(String tableName, String dbschema) {
          try {
             String consulta = this.readSql("/sql_files/getTableMetaData.sql");
             PreparedStatement stm = this.conection.prepareStatement(consulta);
             stm.setString(1, tableName);
+            stm.setString(2, dbschema);
             ResultSet resultset = stm.executeQuery();
             return resultset;
         } catch (Exception e) {
