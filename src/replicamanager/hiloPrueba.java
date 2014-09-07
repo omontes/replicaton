@@ -29,10 +29,10 @@ public class hiloPrueba implements Runnable
                 }*
                  */
                 if ((i % 2) == 0) {
-                    connection_control adminBD = connection_control.getInstanceSQLServer();
+                    ConnectionControl adminBD = ConnectionControl.getInstanceSQLServer();
                     //adminBD.consultarEmpleados();
                 } else {
-                    connection_control adminBD = connection_control.getInstanceMySQLServer();
+                    ConnectionControl adminBD = ConnectionControl.getInstanceSQLServer();
                     //adminBD.consultarEmpleados();
                 }
 
