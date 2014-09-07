@@ -9,6 +9,8 @@ package replicamanager;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -23,10 +25,15 @@ public class controlBase extends connection_control {
         this.statement=statement;
         
     }
-    public static controlBase getConexion(ConnectionFactory fabrica) throws SQLException {
-        Connection conexion = fabrica.getConnectionFactory();
+    public static controlBase getConexion(ConnectionFactory fabrica) {
+         try {
+                   Connection conexion = fabrica.getConnectionFactory();
 
-        adminBD = new controlBase(conexion, conexion.createStatement());
+                   adminBD = new controlBase(conexion, conexion.createStatement());
+                } catch (SQLException ex) {
+                    Logger.getLogger(ReplicaManagerApp.class.getName()).log(Level.SEVERE, null, ex);
+                }
+        
         return adminBD;
     }
 

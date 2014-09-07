@@ -30,16 +30,17 @@ public class ReplicaManager {
         ControlReplicasHilo hilo = new ControlReplicasHilo(control);
         adminBDc2.setEstado(false);
         new Thread(hilo).start();**/
-        
+      
         
         MySqlConnectionFactory company= 
         new MySqlConnectionFactory("localhost","root","123456","company");
+        MySqlConnectionFactory company2= 
+        new MySqlConnectionFactory("localhost","root","123456","company2");
         SqlServerConnectionFactory sqlserver =new SqlServerConnectionFactory("localhost","sa","123456","db");
        
-        controlBase controlCompany = controlBase.getConexion(company);
-        controlCompany.consultarEmpleados();
-        controlBase controlSQL = controlBase.getConexion(sqlserver);
-        controlSQL.consultarEmpleados();
+        controlBase adminBDC1 = controlBase.getConexion(company);
+        controlBase adminBDOrigen = controlBase.getConexion(sqlserver);
+        controlBase adminBDc2 = controlBase.getConexion(company2);
         //ResultSet rs =adminBD.consultarTablaEventos();
         //System.out.println(rs.next());
         //adminBD.consultarEmpleados();

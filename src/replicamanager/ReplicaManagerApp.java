@@ -19,17 +19,24 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
     /**
      * Creates new form ReplicaManagerApp
      */
-     ConnectionControl adminBDOrigen = ConnectionControl.getInstanceSQLServer();
-     ConnectionControl adminBDC1 = ConnectionControl.getInstanceMySQLCompany();
-     ConnectionControl adminBDc2 = ConnectionControl.getInstanceMySQLCompany2();
-
-     ControlReplicas control = new ControlReplicas(adminBDOrigen);
+     
         
+        
+        MySqlConnectionFactory company= 
+        new MySqlConnectionFactory("localhost","root","123456","company");
+        MySqlConnectionFactory company2= 
+        new MySqlConnectionFactory("localhost","root","123456","company2");
+        SqlServerConnectionFactory sqlserver =new SqlServerConnectionFactory("localhost","sa","123456","db");
+        connection_control adminBDC1 = controlBase.getConexion(company);
+        connection_control adminBDOrigen = controlBase.getConexion(sqlserver);
+        connection_control adminBDc2 = controlBase.getConexion(company2); 
+        
+        ControlReplicas control = new ControlReplicas(adminBDOrigen);
         
     public ReplicaManagerApp() {
         initComponents();
         
-       
+        
         control.agregarReplica(adminBDC1);
         control.agregarReplica(adminBDc2);
         ControlReplicasHilo hilo = new ControlReplicasHilo(control);
@@ -145,4 +152,8 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
     javax.swing.JButton BTNActivar;
     javax.swing.JButton BTNPausar;
     // End of variables declaration//GEN-END:variables
+
+  
+        
+    
 }

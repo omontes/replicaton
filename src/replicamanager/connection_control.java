@@ -23,7 +23,7 @@ import java.sql.Statement;
 public class connection_control {
     public Connection conection;
     public Statement statement;
-    private static ConnectionControl AdminBD;
+    private static connection_control AdminBD;
     private boolean estado;
    
     public connection_control () {
@@ -34,7 +34,7 @@ public class connection_control {
 
     
     private String readSql(String filePath) throws IOException {
-        InputStream inputfile = ConnectionControl.class.getClass().getResourceAsStream(filePath);
+        InputStream inputfile = connection_control.class.getClass().getResourceAsStream(filePath);
         StringBuilder sb;
         try (BufferedReader input = new BufferedReader(new InputStreamReader(inputfile))) {
             String str;
