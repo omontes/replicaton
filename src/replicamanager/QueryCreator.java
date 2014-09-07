@@ -27,7 +27,7 @@ public class QueryCreator {
         MySqlConnectionFactory mysql= 
         new MySqlConnectionFactory("localhost","root","123456","db");
         SqlServerConnectionFactory sqlserver =
-                new SqlServerConnectionFactory("localhost","sa","123456","db");
+                new SqlServerConnectionFactory("localhost","sa","123456","db2");
        
         controlBase destination = controlBase.getConexion(mysql);
         controlBase connection = controlBase.getConexion(sqlserver);
@@ -66,9 +66,9 @@ public class QueryCreator {
     public void replicatetoSQLServer() throws FileNotFoundException, UnsupportedEncodingException, SQLException, IOException{
         
          MySqlConnectionFactory mysql= 
-        new MySqlConnectionFactory("localhost","root","123456","company");
+        new MySqlConnectionFactory("localhost","root","123456","db");
         SqlServerConnectionFactory sqlserver =
-                new SqlServerConnectionFactory("localhost","sa","123456","db");
+                new SqlServerConnectionFactory("localhost","sa","123456","db2");
        
         controlBase destination = controlBase.getConexion(sqlserver);
         controlBase connection = controlBase.getConexion(mysql);
@@ -107,9 +107,9 @@ public class QueryCreator {
     public void insertDataToMySQL(String tableName) throws SQLException, IOException{
         
             MySqlConnectionFactory mysql= 
-        new MySqlConnectionFactory("localhost","root","123456","company");
+        new MySqlConnectionFactory("localhost","root","123456","db");
         SqlServerConnectionFactory sqlserver =
-                new SqlServerConnectionFactory("localhost","sa","123456","db");
+                new SqlServerConnectionFactory("localhost","sa","123456","db2");
        
         controlBase destination = controlBase.getConexion(mysql);
         controlBase connection = controlBase.getConexion(sqlserver);
@@ -148,9 +148,9 @@ public class QueryCreator {
     
     public void insertDataSQLServer(String tableName) throws SQLException, IOException{
         MySqlConnectionFactory mysql= 
-        new MySqlConnectionFactory("localhost","root","123456","company");
+        new MySqlConnectionFactory("localhost","root","123456","db");
         SqlServerConnectionFactory sqlserver =
-                new SqlServerConnectionFactory("localhost","sa","123456","db");
+                new SqlServerConnectionFactory("localhost","sa","123456","db2");
        
         controlBase destination = controlBase.getConexion(sqlserver);
         controlBase connection = controlBase.getConexion(mysql);
