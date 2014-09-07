@@ -25,7 +25,7 @@ public class QueryCreator {
     public void replicatetoMySQL() throws FileNotFoundException, UnsupportedEncodingException, SQLException, IOException{
         
         MySqlConnectionFactory mysql= 
-        new MySqlConnectionFactory("localhost","root","123456","company");
+        new MySqlConnectionFactory("localhost","root","123456","db");
         SqlServerConnectionFactory sqlserver =
                 new SqlServerConnectionFactory("localhost","sa","123456","db");
        

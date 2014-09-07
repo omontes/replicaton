@@ -54,7 +54,7 @@ public class ReplicaManager {
         //hiloPrueba t = new hiloPrueba();
         //new Thread(t).start();
         QueryCreator test = new QueryCreator();
-        test.replicatetoSQLServer();
+        test.replicatetoMySQL();
 
         //HiloPrueba t = new HiloPrueba();
         //new Thread(t).start();
