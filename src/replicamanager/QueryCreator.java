@@ -22,7 +22,7 @@ public class QueryCreator {
     //Este metodo es usado para crear un query encargado de crear todas las tablas de una base de datos
     public void createAllTablesQuery() throws FileNotFoundException, UnsupportedEncodingException, SQLException{
         query = new PrintWriter("tempQuery.sql", "UTF-8");
-        connection_control connection = connection_control.getInstanceSQLServer();
+        ConnectionControl connection = ConnectionControl.getInstanceSQLServer();
         ResultSet Entidades = connection.getAllTablas();
         query.println("CREATE DATABASE replication;");
         query.println("USE replication;");
