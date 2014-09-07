@@ -6,9 +6,13 @@
 
 package replicamanager;
 
-import java.sql.ResultSet;
+
+import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
+import java.sql.ResultSet;
 import java.util.ArrayList;
+
 
 /**
  *
@@ -43,11 +47,19 @@ public class ReplicaManager {
         controlBase adminBDc2 = controlBase.getConexion(company2);
         //ResultSet rs =adminBD.consultarTablaEventos();
         //System.out.println(rs.next());
+
         //adminBD.consultarEmpleados();
+
+        //hiloPrueba t = new hiloPrueba();
+        //new Thread(t).start();
+        QueryCreator test = new QueryCreator();
+        test.createAllTablesQuery();
+
         //HiloPrueba t = new HiloPrueba();
         //new Thread(t).start();
         
         
+
     }
     
 }
