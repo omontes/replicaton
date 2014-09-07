@@ -171,9 +171,10 @@ public class connection_control {
         
          
     }
-        ResultSet getAllTablas() {
+     //Metodo usado para obtener todas las entidades o tablas de una Base de Datos
+     ResultSet getAllTablas() {
          try {
-            DatabaseMetaData dbmd = conection.getMetaData();
+            DatabaseMetaData dbmd = this.conection.getMetaData();
             String[] TABLE = {"TABLE"};
             String dbo = "dbo";
             ResultSet resultset = dbmd.getTables(null, dbo, "%", TABLE);
@@ -185,6 +186,7 @@ public class connection_control {
         return null;
     }
     
+    //Metodo usado para obtener todas los atributos de una tabla especifica
     ResultSet getAllAtributosDeTabla(String tableName) {
          try {
             String consulta = this.readSql("/sql_files/getTableMetaData.sql");
@@ -197,6 +199,25 @@ public class connection_control {
         }
         return null;
     }
+    
+    ResultSet getAllData(String tableName){
+        try {
+            String consulta = "SELECT * FROM " + tableName + ";";
+            PreparedStatement stm = this.conection.prepareStatement(consulta);
+            ResultSet resultset = stm.executeQuery();
+            return resultset;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    //Metodo usado para replicar una base de datos
+    void executeQuery(String query) throws IOException, SQLException{
+        PreparedStatement stm = this.conection.prepareStatement(query);
+        stm.execute();
+    }
+    
     /**
      * @return the estado
      */

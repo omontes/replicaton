@@ -8,6 +8,7 @@ package replicamanager;
 
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.sql.ResultSet;
@@ -23,7 +24,7 @@ public class ReplicaManager {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws SQLException, FileNotFoundException, UnsupportedEncodingException {
+    public static void main(String[] args) throws SQLException, FileNotFoundException, UnsupportedEncodingException, IOException {
        /** ConnectionControl adminBDOrigen = ConnectionControl.getInstanceSQLServer();
         ConnectionControl adminBDC1 = ConnectionControl.getInstanceMySQLCompany();
         ConnectionControl adminBDc2 = ConnectionControl.getInstanceMySQLCompany2();
@@ -36,7 +37,7 @@ public class ReplicaManager {
         new Thread(hilo).start();**/
       
         
-        MySqlConnectionFactory company= 
+        /**MySqlConnectionFactory company= 
         new MySqlConnectionFactory("localhost","root","123456","company");
         MySqlConnectionFactory company2= 
         new MySqlConnectionFactory("localhost","root","123456","company2");
@@ -45,7 +46,7 @@ public class ReplicaManager {
         controlBase adminBDC1 = controlBase.getConexion(company);
         controlBase adminBDOrigen = controlBase.getConexion(sqlserver);
         controlBase adminBDc2 = controlBase.getConexion(company2);
-        //ResultSet rs =adminBD.consultarTablaEventos();
+        //ResultSet rs =adminBD.consultarTablaEventos();**/
         //System.out.println(rs.next());
 
         //adminBD.consultarEmpleados();
@@ -53,7 +54,7 @@ public class ReplicaManager {
         //hiloPrueba t = new hiloPrueba();
         //new Thread(t).start();
         QueryCreator test = new QueryCreator();
-        test.createAllTablesQuery();
+        test.replicatetoSQLServer();
 
         //HiloPrueba t = new HiloPrueba();
         //new Thread(t).start();
