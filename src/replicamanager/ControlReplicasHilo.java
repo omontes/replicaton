@@ -23,39 +23,41 @@ public class ControlReplicasHilo implements Runnable {
 
     @Override
     public void run() {
-        boolean flag=true;
+        
         while(true){
             try {
+                Thread.sleep(100);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(ControlReplicasHilo.class.getName()).
+                        log(Level.SEVERE, null, ex);
+            }
+            try {
                 
-                if(flag){
-                ResultSet eventos =this.controlRep.BaseOrigen.consultarTablaEventos();
+                ResultSet eventos = this.controlRep.BaseOrigen.
+                        consultarTablaEventos();
                 while (eventos.next()) {
                     int id = eventos.getInt("id");
-                    String entidad= eventos.getString("entidad");
+                    String entidad = eventos.getString("entidad");
                     String tipoEvento = eventos.getString("tipoEvento");
-                    String enable= eventos.getString("enable");
-                    
-                    /****LISTA DE EVENTOS *****/
-                    if (tipoEvento.equals("Inserccion") && enable.equals("1")) {
-                        this.insertarReplicas(id, entidad);
-                        
+                    String enable = eventos.getString("enable");
+                    /**
+                     * **LISTA DE EVENTOS ****
+                     */
+
+                    if (enable.charAt(0) == '1') {
+                       
+                        if (tipoEvento.equals("Inserccion")) {
+                            this.insertarReplicas(id, entidad);
+
+                        }
+                        this.intenteLimpiar(id, entidad);
                     }
-                    flag=false;
-                    /****PROCESO DE LIMPIEZA DE TABLA PRIORIDAD ****/
-                    if(this.existeReplicaPausada()){
-                        /***** No puede borrar y tiene que
-                         * poner en cero los que esten en la lista de prioridad
-                         */
-                        System.out.println("hola osarcar");
-                    }
-                    else{
-                        /**Borrar los que esten en lista de prioridad**/
-                        System.out.println("jlj");
-                    }
+
                 }
-                }
+
             } catch (SQLException ex) {
-                Logger.getLogger(ControlReplicasHilo.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ControlReplicasHilo.class.getName()).
+                        log(Level.SEVERE, null, ex);
             }
                 
             }
@@ -83,7 +85,22 @@ public class ControlReplicasHilo implements Runnable {
         }
         return existePausado;
     }
-
     
+    private void intenteLimpiar(int id, String entidad){
+        
+        /**
+         * **PROCESO DE LIMPIEZA DE TABLA PRIORIDAD ***
+         */
+        if (this.existeReplicaPausada()) {
+            this.controlRep.BaseOrigen.cambiaTablaEventos();
+        } else {
+            /**
+             * Borrar los que esten en lista de prioridad*
+             */
+            this.controlRep.BaseOrigen.eliminarRegistroTablaEventos(id, entidad);
+        }
+    
+    
+    }
     
 }

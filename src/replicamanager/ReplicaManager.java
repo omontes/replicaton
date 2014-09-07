@@ -28,6 +28,7 @@ public class ReplicaManager {
         control.agregarReplica(adminBDC1);
         control.agregarReplica(adminBDc2);
         ControlReplicasHilo hilo = new ControlReplicasHilo(control);
+        adminBDc2.setEstado(false);
         new Thread(hilo).start();
         //ResultSet rs =adminBD.consultarTablaEventos();
         //System.out.println(rs.next());

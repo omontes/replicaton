@@ -6,6 +6,8 @@
 
 package replicamanager;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
@@ -22,6 +24,29 @@ public class ControlReplicas {
     
     public void agregarReplica(ConnectionControl BaseReplica){
         this.BasesReplicas.add(BaseReplica);
+    }
+    
+    
+    private boolean existeReplicaPausada() {
+        boolean existePausado = false;
+        for (int i = 0; i < BasesReplicas.size(); i++) {
+            if (!BasesReplicas.get(i).isEstado()) {
+                existePausado= true;
+            }
+        }
+        return existePausado;
+    }
+    
+    public void despausarReplica(ConnectionControl ReplicaParaDespausar) throws SQLException{
+        /***SE ACTUALIZA LA REPLICA *****/
+        //Se obtienen los datos para actualizar
+        ResultSet obtenerDatos = this.BaseOrigen.consultarTablaEventos();
+        //Se actualiza la replica
+        ReplicaParaDespausar.actualizarReplica(obtenerDatos);
+        ReplicaParaDespausar.setEstado(true);
+        if(!existeReplicaPausada())
+            this.BaseOrigen.eliminarTablaEventos();
+        
     }
     
    

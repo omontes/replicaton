@@ -46,7 +46,7 @@ public class ConnectionControl {
             Setting_upDBMysql setting = new Setting_upDBMysql();
             AdminBD = new ConnectionControl(setting.getConection(), setting.getStatement());
    
-             return AdminBD;
+            return AdminBD;
     }
     public static ConnectionControl getInstanceMySQLCompany2() {
         
@@ -84,7 +84,23 @@ public class ConnectionControl {
             System.out.println("Error al obtener los nombres de los empleados");
         }
     }
-    
+
+    public void actualizarReplica(ResultSet datosActualizar) throws SQLException {
+
+        
+        while (datosActualizar.next()) {
+            int id = datosActualizar.getInt("id");
+            String entidad = datosActualizar.getString("entidad");
+            String tipoEvento = datosActualizar.getString("tipoEvento");
+            if (tipoEvento.equals("Inserccion")) {
+                this.insertarDatoReplica(id, entidad);
+            }
+
+            
+
+        }
+
+    }
     public void insertarDatoReplica(int id, String entidad) {
          try {
 
@@ -103,9 +119,10 @@ public class ConnectionControl {
     }
     
      public ResultSet consultarTablaEventos() {
+         
          ResultSet resultset = null;
          try {
-
+             
             String consultarEventos = this.readSql("/sql_files/consultarTablaEventos.sql");
             PreparedStatement stm = this.conection.prepareStatement(consultarEventos);
             resultset = stm.executeQuery();
@@ -122,7 +139,59 @@ public class ConnectionControl {
         
          
     }
+     public void eliminarTablaEventos() {
+         
+         try {
 
+            String eliminarTablaEventos = this.readSql("/sql_files/eliminaLogEventCompleto.sql");
+            PreparedStatement stm = this.conection.prepareStatement(eliminarTablaEventos);
+            stm.executeUpdate();
+            //Imprime el resultado obtenido del valor del inventario
+            
+
+        } catch (Exception e) {
+            System.out.println("Error al eliminar todos los registros del log event");
+        }
+      }
+     
+ 
+      public void eliminarRegistroTablaEventos(int id, String entidad) {
+         
+         try {
+
+            String eliminarRegistroTablaEventos = this.readSql("/sql_files/eliminaRegistroLogEvent.sql");
+            PreparedStatement stm = this.conection.prepareStatement(eliminarRegistroTablaEventos);
+            stm.setInt(1, id);
+            stm.setString(2, entidad);
+            stm.executeUpdate();
+            //Imprime el resultado obtenido del valor del inventario
+            
+
+        } catch (Exception e) {
+            System.out.println("Error al eliminar registro de tabla logevent");
+        }
+      }
+         
+        public void cambiaTablaEventos() {
+         
+         try {
+
+            String cambiarRegistroTablaEventos = this.readSql("/sql_files/cambiarEnableLogTable.sql");
+            this.statement.executeUpdate(cambiarRegistroTablaEventos);
+         
+            //Imprime el resultado obtenido del valor del inventario
+            
+
+        } catch (Exception e) {
+            System.out.println("Error al cambiar registro de tabla logevent");
+        } 
+         
+       
+        
+         
+        
+         
+    }
     /**
      * @return the estado
      */
@@ -135,6 +204,10 @@ public class ConnectionControl {
      */
     public void setEstado(boolean estado) {
         this.estado = estado;
+        
     }
+   
+    
+   
 
 }
