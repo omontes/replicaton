@@ -23,7 +23,7 @@ public class Setting_upDBSqlServer {
      * Parametros de conexion
      */
     private String driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
-    private String database = "jdbc:sqlserver://OSCARMONTES-HP;instanceName=SQLSERVER;databaseName=db";
+    private String database = "jdbc:sqlserver://localhost;instanceName=SQLSERVER;databaseName=db";
     private String user = "sa";
     private String pass = "123456";
     private Connection conection;

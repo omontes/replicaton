@@ -11,9 +11,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
@@ -57,10 +59,36 @@ public class connection_control {
         }
         return sb.toString();
     }
+    
+      ResultSet getAllTablas() {
+         try {
+            DatabaseMetaData dbmd = conection.getMetaData();
+            String[] TABLE = {"TABLE"};
+            String dbo = "dbo";
+            ResultSet resultset = dbmd.getTables(null, dbo, "%", TABLE);
+            return resultset;
+        } 
+            catch (SQLException e) {
+            e.printStackTrace();
+            }
+        return null;
+    }
+    
+    ResultSet getAllAtributosDeTabla(String tableName) {
+         try {
+            String consulta = this.readSql("/sql_files/getTableMetaData.sql");
+            PreparedStatement stm = this.conection.prepareStatement(consulta);
+            stm.setString(1, tableName);
+            ResultSet resultset = stm.executeQuery();
+            return resultset;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     void consultarEmpleados() {
          try {
-
             String valorInventario = this.readSql("/sql_files/consultarEmpleados.sql");
             PreparedStatement stm = this.conection.prepareStatement(valorInventario);
             ResultSetMetaData metadata =stm.getMetaData();
@@ -68,8 +96,7 @@ public class connection_control {
             ResultSet resultset = stm.executeQuery();
             //Imprime el resultado obtenido del valor del inventario
             while (resultset.next()) {
-                System.out.println(resultset.getString(1)
-                        );
+                System.out.println(resultset.getString(1));
             }
 
         } catch (Exception e) {

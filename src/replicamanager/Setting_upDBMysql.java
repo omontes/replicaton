@@ -22,7 +22,7 @@ public class Setting_upDBMysql {
      * Parametros de conexion
      */
     private String driver = "com.mysql.jdbc.Driver";
-    private String database = "jdbc:mysql://localhost:3306/company";
+    private String database = "jdbc:mysql://172.26.104.94:3306/company";
     private String user = "root";
     private String pass = "123456";
     private Connection conection;
