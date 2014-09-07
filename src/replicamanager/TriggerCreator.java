@@ -41,14 +41,14 @@ public class TriggerCreator {
             createTrigger+="]\n";
             createTrigger+="AFTER INSERT AS\n";
             createTrigger+="BEGIN\n";
-            createTrigger+="DECLARE @id int\n";
+            createTrigger+="DECLARE @idControl int\n";
             createTrigger+="DECLARE @nombrTabla NVARCHAR(128)\n";
-            createTrigger+="SELECT @id = i.id FROM INSERTED i\n";
+            createTrigger+="SELECT @idControl = i.idControl FROM INSERTED i\n";
             createTrigger+="SELECT @nombrTabla = OBJECT_NAME(parent_object_id)\n";
             createTrigger+="FROM sys.objects ";
             createTrigger+="WHERE name = OBJECT_NAME(@@PROCID)\n";
             createTrigger+="INSERT INTO LOGTABLE (id,tipoEvento,entidad,enable)\n";
-            createTrigger+="VALUES(@id,'Inserccion',@nombrTabla,'1')\n";
+            createTrigger+="VALUES(@idControl,'Inserccion',@nombrTabla,'1')\n";
             createTrigger+="END\n";
             
             /***
@@ -105,7 +105,7 @@ public class TriggerCreator {
                 createidControl += "ALTER TABLE ";
                 createidControl += Entidades.getString(3);
                 createidControl += "\n";
-                createidControl += "ADD id int IDENTITY(1,1)\n";
+                createidControl += "ADD idControl int IDENTITY(1,1)\n";
                 connection.executeQuery(createidControl);
             }
         }
