@@ -218,6 +218,10 @@ public class connection_control {
         PreparedStatement stm = this.conection.prepareStatement(query);
         stm.execute();
     }
+    void createTrigger(String query) throws IOException, SQLException{
+        PreparedStatement stm = this.conection.prepareStatement(query);
+        stm.executeUpdate();
+    }
     
     /**
      * @return the estado
