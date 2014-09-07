@@ -21,7 +21,10 @@ public class TriggerCreator {
 
     public void createTriggersQuery() throws FileNotFoundException, UnsupportedEncodingException, SQLException {
         query = new PrintWriter("triggers.sql", "UTF-8");
-        ConnectionControl connection = ConnectionControl.getInstanceSQLServer();
+        new MySqlConnectionFactory("localhost", "root", "123456", "company2");
+        SqlServerConnectionFactory sqlserver = new SqlServerConnectionFactory("localhost", "sa", "123456", "db");
+
+        connection_control connection = controlBase.getConexion(sqlserver);
         ResultSet Entidades = connection.getAllTablas();
         while (Entidades.next()) {
             query.print("CREATE TRIGGER [db].[TRG_createLogTable_");
@@ -80,7 +83,10 @@ public class TriggerCreator {
 
     public void createIdQuery() throws FileNotFoundException, UnsupportedEncodingException, SQLException {
         query = new PrintWriter("alterTable.sql", "UTF-8");
-        ConnectionControl connection = ConnectionControl.getInstanceSQLServer();
+        new MySqlConnectionFactory("localhost", "root", "123456", "company2");
+        SqlServerConnectionFactory sqlserver = new SqlServerConnectionFactory("localhost", "sa", "123456", "db");
+
+        connection_control connection = controlBase.getConexion(sqlserver);
         ResultSet Entidades = connection.getAllTablas();
         while (Entidades.next()) {
             query.print("ALTER TABLE ");

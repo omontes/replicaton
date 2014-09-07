@@ -23,7 +23,7 @@ public class ReplicaManager {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, FileNotFoundException, UnsupportedEncodingException {
        /** ConnectionControl adminBDOrigen = ConnectionControl.getInstanceSQLServer();
         ConnectionControl adminBDC1 = ConnectionControl.getInstanceMySQLCompany();
         ConnectionControl adminBDc2 = ConnectionControl.getInstanceMySQLCompany2();
