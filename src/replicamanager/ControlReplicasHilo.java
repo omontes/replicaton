@@ -70,6 +70,8 @@ public class ControlReplicasHilo implements Runnable {
         
         for (int i = 0; i < this.controlRep.BasesReplicas.size(); i++) {
             if (this.controlRep.BasesReplicas.get(i).isEstado()) {
+                ResultSet atributos =this.controlRep.getBaseOrigen().getAllAtributosDeTabla(entidad, "dbo");
+                ResultSet datos = this.controlRep.getBaseOrigen().obtenerDatos(entidad,id);
                 this.controlRep.BasesReplicas.get(i).insertarDatoReplica(id,
                         entidad.toLowerCase());
             }
