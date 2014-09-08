@@ -11,6 +11,8 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -83,7 +85,7 @@ public class TriggerCreator {
             query.println("WHERE name = OBJECT_NAME(@@PROCID)");
             query.println("INSERT INTO LOGTABLE (id,tipoEvento,entidad,enable)");
             query.println("VALUES(@id,'Update',@nombrTabla,'1')\n");**/
-            connection.createTrigger(createTrigger);
+            connection.createDDL(createTrigger);
         }
         
     }
@@ -115,4 +117,62 @@ public class TriggerCreator {
      ALTER TABLE <nombre>
      ADD id int IDENTITY(1,1)
      */
+
+    void crearLogTable(SqlServerConnectionFactory origen) {
+        String createLOGTABLE = "CREATE TABLE LOGTABLE\n"
+                + "(	id          INT NOT NULL,\n"
+                + "	tipoEvento  VARCHAR(15),\n"
+                + "	entidad     VARCHAR(50),\n"
+                + "	enable      char(1)\n"
+                + ");";
+        connection_control connection = controlBase.getConexion(origen);
+        try {
+            connection.createDDL(createLOGTABLE);
+        } catch (IOException ex) {
+            Logger.getLogger(TriggerCreator.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(TriggerCreator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+    void crearTriggerLogTable(SqlServerConnectionFactory origen){
+        String createTriggerLOGTABLE = "CREATE TRIGGER [dbo]."
+                + "[TRG_createLogTable_history] ON [dbo].[logtable]\n"
+                + "AFTER INSERT AS\n"
+                + "BEGIN\n"
+                + "DECLARE @id int\n"
+                + "DECLARE @tipoEvento VARCHAR(15)\n"
+                + "DECLARE @entidad VARCHAR(50)\n"
+                + "SELECT @id = i.id FROM INSERTED i\n"
+                + "SELECT @tipoEvento = i.tipoEvento FROM INSERTED i\n"
+                + "SELECT @entidad= i.entidad FROM INSERTED i\n"
+                + "INSERT INTO HISTORYTABLE(id,tipoEvento,entidad,fecha)\n"
+                + "VALUES(@id,@tipoEvento,@entidad,CURRENT_TIMESTAMP)\n"
+                + "END";
+        connection_control connection = controlBase.getConexion(origen);
+        try {
+            connection.createDDL(createTriggerLOGTABLE);
+        } catch (IOException ex) {
+            Logger.getLogger(TriggerCreator.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(TriggerCreator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    void crearHistoryTable(SqlServerConnectionFactory origen) {
+        String createHISTORYTABLE = "CREATE TABLE HISTORYTABLE\n"
+                + "(	id          INT NOT NULL,\n"
+                + "	tipoEvento  VARCHAR(15),\n"
+                + "	entidad     VARCHAR(50),\n"
+                + "	fecha      DATETIME\n"
+                + ");";
+        connection_control connection = controlBase.getConexion(origen);
+        try {
+            connection.createDDL(createHISTORYTABLE);
+        } catch (IOException ex) {
+            Logger.getLogger(TriggerCreator.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(TriggerCreator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
 }

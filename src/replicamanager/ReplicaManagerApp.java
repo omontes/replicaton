@@ -533,8 +533,23 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
            mysqlserver = new MySqlConnectionFactory(TF_IPDestino.getText(),TF_UsuarioDestino.getText(),TF_PasswordDestino.getText(),TF_DBNameDestino.getText());
 
         }
+        //Agrega los datos del origen:"sqlserver" al destino a replicar "mysqlserver"
         this.generarReplica(sqlserver, mysqlserver);
+        
+        /**************SI HAY MAS DESTINOS ES SOLO AGREGAR LA LINEA DE CODIGO 
+         * DE ARRIBA Y AGREGAR OTRO mysqlserver
+         */
+        //Agrega los triggers al origen: "sqlserver"
         this.generarTriggers(sqlserver);
+        
+        //EMPIEZA LA ACCION SE PONE A EJECUTAR EL HILO
+
+        ControlReplicas control = new ControlReplicas();
+        control.setBaseOrigen(controlBase.getConexion(sqlserver));
+        //DEBE HABER UN METODO PARA AGREGAR N REPLICAS
+        control.agregarReplica(controlBase.getConexion(mysqlserver));
+        ControlReplicasHilo hilo = new ControlReplicasHilo(control);
+        new Thread(hilo).start();
             
     
     }
@@ -552,12 +567,15 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
     private void generarTriggers(SqlServerConnectionFactory origen) {
            try {
                TriggerCreator triggerCreator = new TriggerCreator();
-               /**ANTES DE CREAR TRIGGER SE DEBE HACER DOS COSAS
-                * 1- CREAR LA TABLA LOGTABLE Y HISTORYTABLE
-                * 2- EL TRIGGER DE LA TABLA LOGTABLE
-                * 3- CREAR LOS ID EN TDAS LAS TABLAS triggerCreator.createIdQuery();
-                */
+               /**Se crea la tabla del control para replicas en origen **/
+               triggerCreator.crearLogTable(origen);
+               /**Se crea la tabla del historial en el origen **/
+               triggerCreator.crearHistoryTable(origen);
+               /** Se crea el trigger que llena el historial **/
+               triggerCreator.crearTriggerLogTable(origen);
+               /** Se crean los ids en tdas las tablas del origen **/
                triggerCreator.createIdQuery(origen);
+               /** Se crean todos los triggers genericos en origen **/
                triggerCreator.createTriggersQuery(origen);
            } 
            catch (SQLException ex) {

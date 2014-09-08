@@ -50,9 +50,11 @@ public class ReplicaManager {
         //System.out.println(rs.next());
 
         //adminBD.consultarEmpleados();
-
+        
         //hiloPrueba t = new hiloPrueba();
         //new Thread(t).start();
+        
+        //No olvidar quitar el crearBase() en mysql Fabrica si no vacia la base
         QueryCreator test = new QueryCreator();
         test.replicatetoSQLServer();
         
@@ -67,7 +69,8 @@ public class ReplicaManager {
         //triggerCreator.createIdQuery();
         //triggerCreator.createTriggersQuery();
        
-    
+        //MySqlConnectionFactory db= 
+        //new MySqlConnectionFactory("localhost","root","123456","db");
 
     }
     
