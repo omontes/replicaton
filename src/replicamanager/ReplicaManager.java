@@ -55,8 +55,8 @@ public class ReplicaManager {
         //new Thread(t).start();
         
         //No olvidar quitar el crearBase() en mysql Fabrica si no vacia la base
-        //QueryCreator test = new QueryCreator();
-        //test.replicatetoSQLServer();
+        QueryCreator test = new QueryCreator();
+        test.replicatetoSQLServer();
         
         //HiloPrueba t = new HiloPrueba();
         //new Thread(t).start();
