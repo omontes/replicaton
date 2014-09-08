@@ -27,7 +27,7 @@ public class TriggerCreator {
         connection_control connection = controlBase.getConexion(origen);
         ResultSet Entidades = connection.getAllTablas();
         while (Entidades.next()) {
-            if (Entidades.getString(3).equals("LOGTABLE")) {
+            if (Entidades.getString(3).equals("LOGTABLE") || Entidades.getString(3).equals("HISTORYTABLE")) {
                 continue;
 
             }
@@ -97,7 +97,7 @@ public class TriggerCreator {
         connection_control connection = controlBase.getConexion(origen);
         ResultSet Entidades = connection.getAllTablas();
         while (Entidades.next()) {
-            if(Entidades.getString(3).equals("LOGTABLE")){
+            if(Entidades.getString(3).equals("LOGTABLE") || Entidades.getString(3).equals("HISTORYTABLE")){
                 continue;
             }
             else {
