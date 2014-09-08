@@ -6,9 +6,24 @@
 
 package replicamanager;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.UIManager;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 
 /**
  *
@@ -21,27 +36,27 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
      */
      
         
-        
-        MySqlConnectionFactory company= 
-        new MySqlConnectionFactory("localhost","root","123456","company");
-        MySqlConnectionFactory company2= 
-        new MySqlConnectionFactory("localhost","root","123456","company2");
-        SqlServerConnectionFactory sqlserver =new SqlServerConnectionFactory("localhost","sa","123456","db");
-        connection_control adminBDC1 = controlBase.getConexion(company);
-        connection_control adminBDOrigen = controlBase.getConexion(sqlserver);
-        connection_control adminBDc2 = controlBase.getConexion(company2); 
-        
-        ControlReplicas control = new ControlReplicas(adminBDOrigen);
+//        
+//        MySqlConnectionFactory company= 
+//        new MySqlConnectionFactory("localhost","root","123456","company");
+//        MySqlConnectionFactory company2= 
+//        new MySqlConnectionFactory("localhost","root","123456","company2");
+//        SqlServerConnectionFactory sqlserver =new SqlServerConnectionFactory("localhost","sa","123456","db");
+//        connection_control adminBDC1 = controlBase.getConexion(company);
+//        connection_control adminBDOrigen = controlBase.getConexion(sqlserver);
+//        connection_control adminBDc2 = controlBase.getConexion(company2); 
+//        
+       ControlReplicas control = new ControlReplicas();
         
     public ReplicaManagerApp() {
         initComponents();
+        getContentPane().setBackground(Color.white);
         
-        
-        control.agregarReplica(adminBDC1);
-        control.agregarReplica(adminBDc2);
-        ControlReplicasHilo hilo = new ControlReplicasHilo(control);
-        adminBDc2.setEstado(false);
-        new Thread(hilo).start();
+//        control.agregarReplica(adminBDC1);
+//        control.agregarReplica(adminBDc2);
+//        ControlReplicasHilo hilo = new ControlReplicasHilo(control);
+//        adminBDc2.setEstado(false);
+      //  new Thread(hilo).start();
     }
 
     /**
@@ -54,6 +69,36 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
 
         BTNActivar = new javax.swing.JButton();
         BTNPausar = new javax.swing.JButton();
+        Tab_ConjuntoTabs = new javax.swing.JTabbedPane();
+        CB_SeleccionMotorDestino = new javax.swing.JPanel();
+        TF_IPOrigen = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        CB_SeleccionMotorOrigen = new javax.swing.JComboBox();
+        jSeparator1 = new javax.swing.JSeparator();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        BTN_AceptarAgregarReplica = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
+        TF_UsuarioOrigen = new javax.swing.JTextField();
+        TF_PasswordOrigen = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        TF_DBNameOrigen = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        CB_SeleccionMotDestino = new javax.swing.JComboBox();
+        jLabel10 = new javax.swing.JLabel();
+        TF_IPDestino = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+        TF_UsuarioDestino = new javax.swing.JTextField();
+        jLabel12 = new javax.swing.JLabel();
+        TF_DBNameDestino = new javax.swing.JTextField();
+        jLabel13 = new javax.swing.JLabel();
+        TF_PasswordDestino = new javax.swing.JTextField();
+        Tab_VerReplicas = new javax.swing.JScrollPane();
+        Tab_LogEventos = new javax.swing.JScrollPane();
+        Tab_HistorialCRUD = new javax.swing.JScrollPane();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -72,47 +117,590 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
             }
         });
 
+        Tab_ConjuntoTabs.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                Tab_ConjuntoTabsMouseClicked(evt);
+            }
+        });
+
+        TF_IPOrigen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TF_IPOrigenActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Motor Base de Datos");
+
+        CB_SeleccionMotorOrigen.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "SQL Server", "MySQL" }));
+        CB_SeleccionMotorOrigen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CB_SeleccionMotorOrigenActionPerformed(evt);
+            }
+        });
+
+        jSeparator1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+
+        jLabel3.setFont(new java.awt.Font("Traditional Arabic", 0, 18)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(102, 102, 102));
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setText("Origen ");
+
+        jLabel4.setFont(new java.awt.Font("Traditional Arabic", 0, 18)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(102, 102, 102));
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel4.setText("Destino ");
+
+        jLabel5.setText("IP");
+
+        BTN_AceptarAgregarReplica.setText("Aceptar");
+        BTN_AceptarAgregarReplica.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BTN_AceptarAgregarReplicaActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setText("Usuario");
+
+        TF_PasswordOrigen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TF_PasswordOrigenActionPerformed(evt);
+            }
+        });
+
+        jLabel7.setText("Password");
+
+        TF_DBNameOrigen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TF_DBNameOrigenActionPerformed(evt);
+            }
+        });
+
+        jLabel8.setText("Nombre Base Datos");
+
+        jLabel9.setText("Motor Base de Datos");
+
+        CB_SeleccionMotDestino.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "SQL Server", "MySQL" }));
+        CB_SeleccionMotDestino.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CB_SeleccionMotDestinoActionPerformed(evt);
+            }
+        });
+
+        jLabel10.setText("IP");
+
+        TF_IPDestino.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TF_IPDestinoActionPerformed(evt);
+            }
+        });
+
+        jLabel11.setText("Usuario");
+
+        jLabel12.setText("Nombre Base Datos");
+
+        TF_DBNameDestino.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TF_DBNameDestinoActionPerformed(evt);
+            }
+        });
+
+        jLabel13.setText("Password");
+
+        TF_PasswordDestino.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TF_PasswordDestinoActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout CB_SeleccionMotorDestinoLayout = new javax.swing.GroupLayout(CB_SeleccionMotorDestino);
+        CB_SeleccionMotorDestino.setLayout(CB_SeleccionMotorDestinoLayout);
+        CB_SeleccionMotorDestinoLayout.setHorizontalGroup(
+            CB_SeleccionMotorDestinoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(CB_SeleccionMotorDestinoLayout.createSequentialGroup()
+                .addGroup(CB_SeleccionMotorDestinoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(CB_SeleccionMotorDestinoLayout.createSequentialGroup()
+                        .addGroup(CB_SeleccionMotorDestinoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(CB_SeleccionMotorDestinoLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 448, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(12, 12, 12))
+                            .addGroup(CB_SeleccionMotorDestinoLayout.createSequentialGroup()
+                                .addGap(29, 29, 29)
+                                .addGroup(CB_SeleccionMotorDestinoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(CB_SeleccionMotorOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel2))
+                                .addGap(57, 57, 57)
+                                .addGroup(CB_SeleccionMotorDestinoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel6)
+                                    .addComponent(TF_IPOrigen, javax.swing.GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE)
+                                    .addComponent(TF_UsuarioOrigen))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(CB_SeleccionMotorDestinoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(CB_SeleccionMotorDestinoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jLabel8)
+                                        .addComponent(TF_DBNameOrigen, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE))
+                                    .addComponent(jLabel7)
+                                    .addComponent(TF_PasswordOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(29, 29, 29)))
+                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(29, 29, 29)
+                        .addGroup(CB_SeleccionMotorDestinoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 448, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(CB_SeleccionMotorDestinoLayout.createSequentialGroup()
+                                .addGroup(CB_SeleccionMotorDestinoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(CB_SeleccionMotDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel9))
+                                .addGap(57, 57, 57)
+                                .addGroup(CB_SeleccionMotorDestinoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel10)
+                                    .addComponent(jLabel11)
+                                    .addComponent(TF_IPDestino)
+                                    .addComponent(TF_UsuarioDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(57, 57, 57)
+                                .addGroup(CB_SeleccionMotorDestinoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel12)
+                                    .addComponent(TF_DBNameDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel13)
+                                    .addComponent(TF_PasswordDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                    .addGroup(CB_SeleccionMotorDestinoLayout.createSequentialGroup()
+                        .addGap(447, 447, 447)
+                        .addComponent(BTN_AceptarAgregarReplica, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        CB_SeleccionMotorDestinoLayout.setVerticalGroup(
+            CB_SeleccionMotorDestinoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(CB_SeleccionMotorDestinoLayout.createSequentialGroup()
+                .addGroup(CB_SeleccionMotorDestinoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(CB_SeleccionMotorDestinoLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(CB_SeleccionMotorDestinoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(CB_SeleccionMotorDestinoLayout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addGap(18, 18, 18)
+                                .addGroup(CB_SeleccionMotorDestinoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(CB_SeleccionMotorDestinoLayout.createSequentialGroup()
+                                        .addComponent(jLabel2)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(CB_SeleccionMotorOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(CB_SeleccionMotorDestinoLayout.createSequentialGroup()
+                                        .addComponent(jLabel5)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(TF_IPOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(CB_SeleccionMotorDestinoLayout.createSequentialGroup()
+                                        .addComponent(jLabel8)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(TF_DBNameOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(23, 23, 23)
+                                .addGroup(CB_SeleccionMotorDestinoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(CB_SeleccionMotorDestinoLayout.createSequentialGroup()
+                                        .addComponent(jLabel6)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(TF_UsuarioOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(CB_SeleccionMotorDestinoLayout.createSequentialGroup()
+                                        .addComponent(jLabel7)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(TF_PasswordOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(CB_SeleccionMotorDestinoLayout.createSequentialGroup()
+                                .addComponent(jLabel4)
+                                .addGap(18, 18, 18)
+                                .addGroup(CB_SeleccionMotorDestinoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(CB_SeleccionMotorDestinoLayout.createSequentialGroup()
+                                        .addComponent(jLabel9)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(CB_SeleccionMotDestino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(CB_SeleccionMotorDestinoLayout.createSequentialGroup()
+                                        .addComponent(jLabel10)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(TF_IPDestino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(23, 23, 23)
+                                        .addComponent(jLabel11)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(TF_UsuarioDestino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CB_SeleccionMotorDestinoLayout.createSequentialGroup()
+                                .addComponent(jLabel12)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(TF_DBNameDestino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(23, 23, 23)
+                                .addComponent(jLabel13)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(TF_PasswordDestino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(BTN_AceptarAgregarReplica, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 18, Short.MAX_VALUE))
+        );
+
+        Tab_ConjuntoTabs.addTab("Agregar Replica", CB_SeleccionMotorDestino);
+        Tab_ConjuntoTabs.addTab("Ver Informacion Replicas", Tab_VerReplicas);
+        Tab_ConjuntoTabs.addTab("Log Eventos", Tab_LogEventos);
+        Tab_ConjuntoTabs.addTab("Historial CRUD", Tab_HistorialCRUD);
+
+        jLabel1.setFont(new java.awt.Font("Traditional Arabic", 0, 24)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(102, 102, 102));
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Replica Manager");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addGap(63, 63, 63)
-                .addComponent(BTNActivar)
-                .addGap(92, 92, 92)
-                .addComponent(BTNPausar)
-                .addContainerGap(113, Short.MAX_VALUE))
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(BTNActivar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(BTNPausar)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(Tab_ConjuntoTabs))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(98, 98, 98)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(Tab_ConjuntoTabs, javax.swing.GroupLayout.PREFERRED_SIZE, 365, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BTNActivar)
                     .addComponent(BTNPausar))
-                .addContainerGap(179, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
     }//GEN-END:initComponents
 
     private void BTNActivarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BTNActivarActionPerformed
-         try {
-             control.despausarReplica(adminBDc2);
-         } catch (SQLException ex) {
-             Logger.getLogger(ReplicaManagerApp.class.getName()).log(Level.SEVERE, null, ex);
-         }
-     BTNActivar.setEnabled(false);
-     BTNPausar.setEnabled(true);
+//         try {
+//             control.despausarReplica(adminBDc2);
+//         } catch (SQLException ex) {
+//             Logger.getLogger(ReplicaManagerApp.class.getName()).log(Level.SEVERE, null, ex);
+//         }
+//     BTNActivar.setEnabled(false);
+//     BTNPausar.setEnabled(true);
     }//GEN-LAST:event_BTNActivarActionPerformed
 
+    
+    public void PintarVerReplicas(){
+        String ValorTemp = "";
+ 
+        
+        String[] columnas_VerReplicas = new String[] { "Product Name" ,"Price" };
+        Object[][] filas_VerReplicas= new Object[][] { 
+                { "Galleta" ,"$80" }
+            };
+        
+        for(int i = 0; i < 5;i++){
+                
+                ValorTemp+= "Hola";
+                ValorTemp+= "\n\n";
+        }
+        JTable Tabla_VerReplicas= new JTable( filas_VerReplicas, columnas_VerReplicas);
+        Tabla_VerReplicas.setEnabled(false);
+        Tab_VerReplicas.getViewport().add(Tabla_VerReplicas );
+    }
+    
+    
+    
+    
+    
+    
+    
+    
     private void BTNPausarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BTNPausarActionPerformed
-        // TODO add your handling code here:
-         adminBDc2.setEstado(false);
-        BTNPausar.setEnabled(false);
-       BTNActivar.setEnabled(true);
+//        // TODO add your handling code here:
+//         adminBDc2.setEstado(false);
+//        BTNPausar.setEnabled(false);
+//       BTNActivar.setEnabled(true);
     }//GEN-LAST:event_BTNPausarActionPerformed
 
+    private void TF_PasswordDestinoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TF_PasswordDestinoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TF_PasswordDestinoActionPerformed
+
+    private void TF_DBNameDestinoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TF_DBNameDestinoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TF_DBNameDestinoActionPerformed
+
+    private void TF_IPDestinoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TF_IPDestinoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TF_IPDestinoActionPerformed
+
+    private void CB_SeleccionMotDestinoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CB_SeleccionMotDestinoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_CB_SeleccionMotDestinoActionPerformed
+
+    private void TF_DBNameOrigenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TF_DBNameOrigenActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TF_DBNameOrigenActionPerformed
+
+    private void TF_PasswordOrigenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TF_PasswordOrigenActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TF_PasswordOrigenActionPerformed
+
+    private void CB_SeleccionMotorOrigenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CB_SeleccionMotorOrigenActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_CB_SeleccionMotorOrigenActionPerformed
+
+    private void TF_IPOrigenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TF_IPOrigenActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TF_IPOrigenActionPerformed
+
+    private void Tab_ConjuntoTabsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Tab_ConjuntoTabsMouseClicked
+      // PintarVerReplicas();
+        GenerarDatosTabla();
+    }//GEN-LAST:event_Tab_ConjuntoTabsMouseClicked
+
+    private void BTN_AceptarAgregarReplicaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BTN_AceptarAgregarReplicaActionPerformed
+            crearConexion();
+    }//GEN-LAST:event_BTN_AceptarAgregarReplicaActionPerformed
+
+    
+    
+
+    public void GenerarDatosTabla(){
+        ButtonRenderer BR = new ButtonRenderer();
+        ButtonEditor BE = new ButtonEditor(new JCheckBox());
+        DefaultTableModel dm = new DefaultTableModel();
+
+        Object[][] ColumnasTabla = new Object[2][11];
+        int j;
+         ColumnasTabla[0][0] = "Hola"; 
+        ColumnasTabla[0][1] = "Hola 2"; 
+        ColumnasTabla[0][2] = "Hola 3"; 
+        ColumnasTabla[0][3] = "Hola 4"; 
+         ColumnasTabla[0][4] = "Hola"; 
+        ColumnasTabla[0][5] = "Hola 2"; 
+        ColumnasTabla[0][6] = "Hola 3"; 
+        ColumnasTabla[0][7] = "Hola 4"; 
+         ColumnasTabla[0][8] = "Hola"; 
+        ColumnasTabla[0][9] = "Hola 2"; 
+        ColumnasTabla[0][10] = "Pausa"; 
+       
+            ColumnasTabla[1][0] = "Hola"; 
+        ColumnasTabla[1][1] = "Hola 2"; 
+        ColumnasTabla[1][2] = "Hola 3"; 
+        ColumnasTabla[1][3] = "Hola 4"; 
+         ColumnasTabla[1][4] = "Hola"; 
+        ColumnasTabla[1][5] = "Hola 2"; 
+        ColumnasTabla[1][6] = "Hola 3"; 
+        ColumnasTabla[1][7] = "Hola 4"; 
+         ColumnasTabla[1][8] = "Hola"; 
+        ColumnasTabla[1][9] = "Hola 2"; 
+        ColumnasTabla[1][10] = "Pausa"; 
+        
+        
+        
+        
+        // System.out.println("el generado es:"+Generado.size()+"a");
+//        for (int i = 0; i < Entradas.size(); i++) {
+//            j = i + 1;
+//            ColumnasTabla[i][0] = Entradas.get(i);
+//            ColumnasTabla[i][1] = Salidas.get(i);
+//            if (Generado.size() == i) {
+//                ColumnasTabla[i][2] = "";  //Generado.get(i);
+//            } else if (!Generado.isEmpty()) {
+//                ColumnasTabla[i][2] = Generado.get(i);
+//            } else {
+//                ColumnasTabla[i][2] = "";
+//            }
+//            ColumnasTabla[i][3] = "" + j;
+//        }
+
+        dm.setDataVector(ColumnasTabla, new Object[]{"IP Origen","Motor", "Nombre", "Usuario", "Password","IP Destino","Motor ", "Nombre ", "Usuario ", "Password ","Estado"});
+
+        JTable table = new JTable(dm);
+        table.getColumn("Estado").setCellRenderer(BR);
+        table.getColumn("Estado").setCellEditor(BE);
+        //System.out.println(BE.ValorSeleccionado);
+
+        Tab_VerReplicas.getViewport().add(table);
+    }
+
+    private void crearConexion() {
+        SqlServerConnectionFactory sqlserver = null;
+         MySqlConnectionFactory mysqlserver = null;
+        
+        if( "SQL Server".equals(String.valueOf(CB_SeleccionMotorOrigen.getSelectedItem())) ){
+               sqlserver =new SqlServerConnectionFactory(TF_IPOrigen.getText(),TF_UsuarioOrigen.getText(),TF_PasswordOrigen.getText(),TF_DBNameOrigen.getText());
+        
+        }
+        if( "MySQL".equals(String.valueOf(CB_SeleccionMotDestino.getSelectedItem())) ){
+           mysqlserver = new MySqlConnectionFactory(TF_IPDestino.getText(),TF_UsuarioDestino.getText(),TF_PasswordDestino.getText(),TF_DBNameDestino.getText());
+
+        }
+        this.generarReplica(sqlserver, mysqlserver);
+        this.generarTriggers(sqlserver);
+            
+    
+    }
+    
+    
+    private void generarReplica(ConnectionFactory origen , ConnectionFactory destino){
+        try {
+            QueryCreator test = new QueryCreator();
+            test.replicatetoMySQL(origen,destino);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    private void generarTriggers(SqlServerConnectionFactory origen) {
+           try {
+               TriggerCreator triggerCreator = new TriggerCreator();
+               /**ANTES DE CREAR TRIGGER SE DEBE HACER DOS COSAS
+                * 1- CREAR LA TABLA LOGTABLE Y HISTORYTABLE
+                * 2- EL TRIGGER DE LA TABLA LOGTABLE
+                * 3- CREAR LOS ID EN TDAS LAS TABLAS triggerCreator.createIdQuery();
+                */
+               triggerCreator.createIdQuery(origen);
+               triggerCreator.createTriggersQuery(origen);
+           } 
+           catch (SQLException ex) {
+               Logger.getLogger(ReplicaManagerApp.class.getName()).log(Level.SEVERE, null, ex);
+           } catch (IOException ex) {
+               Logger.getLogger(ReplicaManagerApp.class.getName()).log(Level.SEVERE, null, ex);
+           }
+    }
+    
+    
+    
+    /****************
+     * 
+     * Agregar botones Tabla dinamica
+     * 
+     */
+    
+    
+  public class ButtonRenderer extends JButton implements TableCellRenderer {
+
+        public ButtonRenderer() {
+            setOpaque(true);
+        }
+
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                boolean isSelected, boolean hasFocus, int row, int column) {
+            if (isSelected) {
+                setForeground(table.getSelectionForeground());
+                setBackground(table.getSelectionBackground());
+            } else {
+                setForeground(table.getForeground());
+                setBackground(UIManager.getColor("Button.background"));
+            }
+            setText((value == null) ? "" : value.toString());
+            return this;
+        }
+    }
+
+    /**
+     * @version 1.0 11/09/98
+     */
+    public class ButtonEditor extends DefaultCellEditor {
+
+        protected JButton button;
+        String ValorSeleccionado = "";
+        private String label;
+        private boolean isPushed;
+
+        public ButtonEditor(JCheckBox checkBox) {
+            super(checkBox);
+            button = new JButton();
+            button.setOpaque(true);
+            button.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    fireEditingStopped();
+                }
+            });
+        }
+
+        public Component getTableCellEditorComponent(JTable table, Object value,
+                boolean isSelected, int row, int column) {
+            if (isSelected) {
+                button.setForeground(table.getSelectionForeground());
+                button.setBackground(table.getSelectionBackground());
+            } else {
+                button.setForeground(table.getForeground());
+                button.setBackground(table.getBackground());
+            }
+            label = (value == null) ? "" : value.toString();
+            button.setText(label);
+            isPushed = true;
+            return button;
+        }
+
+        public Object getCellEditorValue() {
+            if (isPushed) {
+                    System.out.println("casasasasasa   "    +   "  " + label);
+                    button.setText("Hola");
+//                Lee_TXT LeerTxt = new Lee_TXT();
+//                ArrayList<String> Salidas = null;
+//                try {
+//                    Salidas = LeerTxt.Leer_txt("C:\\Users\\Michael Varela\\Dropbox\\Lenguajes Compiladores E Interpretes\\Tareas\\Tarea 1\\txt\\salida.txt");
+//                } catch (IOException ex) {
+//                    Logger.getLogger(Ventana_Principal.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//
+//
+//                int entero = Integer.parseInt(label);
+//                if ("OK".equals(Salidas.get(entero - 1))) {
+//                    try {
+//                        BtnNext.setVisible(true);
+//                        Automata.ResetTransicionesColor();
+//                        IndiceColorRecorrido = 0;
+//                        Automata.ColorActivadoTrayecorio = true;
+//                        Trayectoria(label);
+//
+//                    } catch (IOException ex) {
+//                        Logger.getLogger(Ventana_Principal.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
+//                } else {
+//                    Automata.ResetTransicionesColor();
+//                    Automata.ColorActivadoTrayecorio = false;
+//                    PintarGrafoCaliente();
+//                    BtnNext.setVisible(false);
+//
+//                }
+//                //      System.out.println("entroooo");
+//                //    PintarGrafoCaliente();
+//                //  }
+//
+//                // System.out.println(label + ": Ouch!");
+            }
+            isPushed = false;
+            return new String(label);
+        }
+
+        public boolean stopCellEditing() {
+            isPushed = false;
+            return super.stopCellEditing();
+        }
+
+        protected void fireEditingStopped() {
+            super.fireEditingStopped();
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     /**
      * @param args the command line arguments
      */
@@ -151,6 +739,36 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     javax.swing.JButton BTNActivar;
     javax.swing.JButton BTNPausar;
+    javax.swing.JButton BTN_AceptarAgregarReplica;
+    javax.swing.JComboBox CB_SeleccionMotDestino;
+    javax.swing.JPanel CB_SeleccionMotorDestino;
+    javax.swing.JComboBox CB_SeleccionMotorOrigen;
+    javax.swing.JTextField TF_DBNameDestino;
+    javax.swing.JTextField TF_DBNameOrigen;
+    javax.swing.JTextField TF_IPDestino;
+    javax.swing.JTextField TF_IPOrigen;
+    javax.swing.JTextField TF_PasswordDestino;
+    javax.swing.JTextField TF_PasswordOrigen;
+    javax.swing.JTextField TF_UsuarioDestino;
+    javax.swing.JTextField TF_UsuarioOrigen;
+    javax.swing.JTabbedPane Tab_ConjuntoTabs;
+    javax.swing.JScrollPane Tab_HistorialCRUD;
+    javax.swing.JScrollPane Tab_LogEventos;
+    javax.swing.JScrollPane Tab_VerReplicas;
+    javax.swing.JLabel jLabel1;
+    javax.swing.JLabel jLabel10;
+    javax.swing.JLabel jLabel11;
+    javax.swing.JLabel jLabel12;
+    javax.swing.JLabel jLabel13;
+    javax.swing.JLabel jLabel2;
+    javax.swing.JLabel jLabel3;
+    javax.swing.JLabel jLabel4;
+    javax.swing.JLabel jLabel5;
+    javax.swing.JLabel jLabel6;
+    javax.swing.JLabel jLabel7;
+    javax.swing.JLabel jLabel8;
+    javax.swing.JLabel jLabel9;
+    javax.swing.JSeparator jSeparator1;
     // End of variables declaration//GEN-END:variables
 
   

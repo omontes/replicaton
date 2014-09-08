@@ -53,19 +53,19 @@ public class ReplicaManager {
 
         //hiloPrueba t = new hiloPrueba();
         //new Thread(t).start();
-        //QueryCreator test = new QueryCreator();
-        //test.replicatetoSQLServer();
+        QueryCreator test = new QueryCreator();
+        test.replicatetoSQLServer();
         
         //HiloPrueba t = new HiloPrueba();
         //new Thread(t).start();
-        TriggerCreator triggerCreator = new TriggerCreator();
+        //TriggerCreator triggerCreator = new TriggerCreator();
         /**ANTES DE CREAR TRIGGER SE DEBE HACER DOS COSAS 
          * 1- CREAR LA TABLA LOGTABLE Y HISTORYTABLE
          * 2- EL TRIGGER DE LA TABLA LOGTABLE
          * 3- CREAR LOS ID EN TDAS LAS TABLAS triggerCreator.createIdQuery();
          */
         //triggerCreator.createIdQuery();
-        triggerCreator.createTriggersQuery();
+        //triggerCreator.createTriggersQuery();
        
     
 

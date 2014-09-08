@@ -20,11 +20,9 @@ public class TriggerCreator {
 
     PrintWriter query;
 
-    public void createTriggersQuery() throws FileNotFoundException, UnsupportedEncodingException, SQLException, IOException {
-        query = new PrintWriter("triggers.sql", "UTF-8");
-        SqlServerConnectionFactory sqlserver = new SqlServerConnectionFactory("localhost", "sa", "123456", "db2");
-
-        connection_control connection = controlBase.getConexion(sqlserver);
+    public void createTriggersQuery(ConnectionFactory origen) throws SQLException, IOException {
+       
+        connection_control connection = controlBase.getConexion(origen);
         ResultSet Entidades = connection.getAllTablas();
         while (Entidades.next()) {
             if (Entidades.getString(3).equals("LOGTABLE")) {
@@ -91,10 +89,10 @@ public class TriggerCreator {
     }
     }
 
-    public void createIdQuery() throws FileNotFoundException, UnsupportedEncodingException, SQLException, IOException {
-        SqlServerConnectionFactory sqlserver = new SqlServerConnectionFactory("localhost", "sa", "123456", "db2");
+    public void createIdQuery(ConnectionFactory origen) throws SQLException, IOException {
+        
 
-        connection_control connection = controlBase.getConexion(sqlserver);
+        connection_control connection = controlBase.getConexion(origen);
         ResultSet Entidades = connection.getAllTablas();
         while (Entidades.next()) {
             if(Entidades.getString(3).equals("LOGTABLE")){

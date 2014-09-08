@@ -15,11 +15,11 @@ import java.util.ArrayList;
  * @author Oscar Montes
  */
 public class ControlReplicas {
-    connection_control BaseOrigen;
+    private connection_control BaseOrigen;
     ArrayList<connection_control> BasesReplicas = new ArrayList<connection_control>();
    
-    public ControlReplicas(connection_control BaseOrigen){
-        this.BaseOrigen=BaseOrigen;
+    public ControlReplicas(){
+        
     }
     
     public void agregarReplica(connection_control BaseReplica){
@@ -40,13 +40,27 @@ public class ControlReplicas {
     public void despausarReplica(connection_control ReplicaParaDespausar) throws SQLException{
         /***SE ACTUALIZA LA REPLICA *****/
         //Se obtienen los datos para actualizar
-        ResultSet obtenerDatos = this.BaseOrigen.consultarTablaEventos();
+        ResultSet obtenerDatos = this.getBaseOrigen().consultarTablaEventos();
         //Se actualiza la replica
         ReplicaParaDespausar.actualizarReplica(obtenerDatos);
         ReplicaParaDespausar.setEstado(true);
         if(!existeReplicaPausada())
-            this.BaseOrigen.eliminarTablaEventos();
+            this.getBaseOrigen().eliminarTablaEventos();
         
+    }
+
+    /**
+     * @return the BaseOrigen
+     */
+    public connection_control getBaseOrigen() {
+        return BaseOrigen;
+    }
+
+    /**
+     * @param BaseOrigen the BaseOrigen to set
+     */
+    public void setBaseOrigen(connection_control BaseOrigen) {
+        this.BaseOrigen = BaseOrigen;
     }
     
    

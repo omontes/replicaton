@@ -33,7 +33,7 @@ public class ControlReplicasHilo implements Runnable {
             }
             try {
                 
-                ResultSet eventos = this.controlRep.BaseOrigen.
+                ResultSet eventos = this.controlRep.getBaseOrigen().
                         consultarTablaEventos();
                 while (eventos.next()) {
                     int id = eventos.getInt("id");
@@ -92,12 +92,12 @@ public class ControlReplicasHilo implements Runnable {
          * **PROCESO DE LIMPIEZA DE TABLA PRIORIDAD ***
          */
         if (this.existeReplicaPausada()) {
-            this.controlRep.BaseOrigen.cambiaTablaEventos();
+            this.controlRep.getBaseOrigen().cambiaTablaEventos();
         } else {
             /**
              * Borrar los que esten en lista de prioridad*
              */
-            this.controlRep.BaseOrigen.eliminarRegistroTablaEventos(id, entidad);
+            this.controlRep.getBaseOrigen().eliminarRegistroTablaEventos(id, entidad);
         }
     
     

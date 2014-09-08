@@ -22,15 +22,10 @@ import java.sql.SQLException;
 public class QueryCreator {
     
     //Este metodo es usado para crear un query encargado de crear todas las tablas de SQLServer a MySQL
-    public void replicatetoMySQL() throws FileNotFoundException, UnsupportedEncodingException, SQLException, IOException{
-        
-        MySqlConnectionFactory mysql= 
-        new MySqlConnectionFactory("localhost","root","123456","db");
-        SqlServerConnectionFactory sqlserver =
-                new SqlServerConnectionFactory("localhost","sa","123456","db2");
-       
-        controlBase destination = controlBase.getConexion(mysql);
-        controlBase connection = controlBase.getConexion(sqlserver);
+    public void replicatetoMySQL(ConnectionFactory origen, ConnectionFactory destino) throws FileNotFoundException, UnsupportedEncodingException, SQLException, IOException{
+             
+        controlBase destination = controlBase.getConexion(destino);
+        controlBase connection = controlBase.getConexion(origen);
         
         /***Cambiar el nombre del schema ****/
         ResultSet Entidades = connection.getAllTablas();
@@ -60,7 +55,7 @@ public class QueryCreator {
             createTableQuery += ";";
             resultSetCounter = 1;
             destination.executeQuery(createTableQuery);
-            insertDataToMySQL(Entidades.getString(3)); //Metodo para insertar la data
+            insertDataToMySQL(Entidades.getString(3),destination,connection); //Metodo para insertar la data
         }
     }
     
@@ -106,17 +101,8 @@ public class QueryCreator {
         }
     }
     
-    public void insertDataToMySQL(String tableName) throws SQLException, IOException{
+    public void insertDataToMySQL(String tableName,controlBase destination,controlBase connection) throws SQLException, IOException{
         
-            MySqlConnectionFactory mysql= 
-        new MySqlConnectionFactory("localhost","root","123456","db");
-        SqlServerConnectionFactory sqlserver =
-                new SqlServerConnectionFactory("localhost","sa","123456","db2");
-       
-        controlBase destination = controlBase.getConexion(mysql);
-        controlBase connection = controlBase.getConexion(sqlserver);
-        
- 
         ResultSet resultset = connection.getAllData(tableName);
         int column = 1;//contador usado para iterar sobre las columnas
         while(resultset.next()){
