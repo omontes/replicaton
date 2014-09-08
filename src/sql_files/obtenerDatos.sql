@@ -1,3 +1,3 @@
 SELECT *
 FROM $tableName
-WHERE id=?;
+WHERE idControl=?;

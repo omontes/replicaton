@@ -120,10 +120,13 @@ public class ControlReplicasHilo implements Runnable {
         while(resultset.next()){
             String insertData = "INSERT INTO " + tableName + " VALUES (";
             ResultSet Atributos = connection.getAllAtributosDeTabla(tableName,"dbo"); //ResultSet usado para saber que tipo es el dato 
+                     
             while(true){
                 try{
                     Atributos.next();
-                    if(!resultset.getString(column).equals("idControl")){
+                    String atributo = Atributos.getString(1);
+                    if(!atributo.equals("idControl")){
+                        
                         if ("int".equals(Atributos.getString(2)) || null == resultset.getString(column)) {
                             insertData += resultset.getString(column);
                         } else {
@@ -136,6 +139,11 @@ public class ControlReplicasHilo implements Runnable {
 
                         }
                         column++;
+                    }
+                    else{
+                        //Tiene que quitar la ultima coma
+                        insertData=insertData.substring(0,insertData.length()-2);
+                        
                     }
                 }catch(Exception e){
                     insertData += ");";
