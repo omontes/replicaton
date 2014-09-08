@@ -147,6 +147,7 @@ public class ControlReplicasHilo implements Runnable {
                     }
                 }catch(Exception e){
                     insertData += ");";
+                    System.out.println(insertData);
                     destination.executeQuery(insertData);
                     insertData = "";
                     break;
