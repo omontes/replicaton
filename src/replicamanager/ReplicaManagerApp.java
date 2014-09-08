@@ -523,7 +523,7 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
 
     private void crearConexion() {
         SqlServerConnectionFactory sqlserver = null;
-         MySqlConnectionFactory mysqlserver = null;
+        MySqlConnectionFactory mysqlserver = null;
         
         if( "SQL Server".equals(String.valueOf(CB_SeleccionMotorOrigen.getSelectedItem())) ){
                sqlserver =new SqlServerConnectionFactory(TF_IPOrigen.getText(),TF_UsuarioOrigen.getText(),TF_PasswordOrigen.getText(),TF_DBNameOrigen.getText());

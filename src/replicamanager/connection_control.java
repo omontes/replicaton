@@ -200,7 +200,19 @@ public class connection_control {
         }
         return null;
     }
-    
+    ResultSet getAllData(String entidad, int id){
+        try {
+            String insertarDatoRep = this.readSql("/sql_files/obtenerDatos.sql");
+            String query =insertarDatoRep.replace("$tableName",entidad);
+            PreparedStatement stm = conection.prepareStatement(query);
+            stm.setInt(1, id);
+            ResultSet resultset = stm.executeQuery();
+            return resultset;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     ResultSet getAllData(String tableName){
         try {
             String consulta = "SELECT * FROM " + tableName + ";";
@@ -237,30 +249,7 @@ public class connection_control {
         this.estado = estado;
         
     }
-    /**
-     * Obtiene los datos a insertar en la replica
-     * @param entidad
-     * @param id
-     * @return 
-     */
-    ResultSet obtenerDatos(String entidad, int id) {
-        ResultSet rs = null; 
-        try {
-
-            String datos = this.readSql("/sql_files/obtenerDatos.sql");
-            String query =datos.replace("$tableName",entidad);
-            PreparedStatement stm = conection.prepareStatement(query);
-            stm.setInt(1, id);
-            rs=stm.executeQuery();
-            
-           
-           
-
-        } catch (Exception e) {
-            System.out.println("Error al insertar un dato en una replica");
-        }
-        return rs;
-    }
+   
    
     
    
