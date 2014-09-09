@@ -40,12 +40,21 @@ public class QueryCreator {
             while(Atributos.next()){
                 createTableQuery += Atributos.getString(1) + " ";
                 createTableQuery += Atributos.getString(2);
+                //Revisar tamano de tipo
                 if(Atributos.getString(3) != null){
                     createTableQuery += "(" + Atributos.getString(3) + ")";
                 }
+                //Revisar si valor es Not Null
                 if("NO".equals(Atributos.getString(4))){
                    createTableQuery += " NOT NULL";
                 }
+                //Revisar si valor contiene DEFAULT
+                if(Atributos.getString(5) != null){
+                    createTableQuery += " DEFAULT ";
+                    String defaultValue = Atributos.getString(5);
+                    createTableQuery +=  defaultValue.substring(1, defaultValue.length()-1); //Se tiene que cortar los extremos del string debido al formato de SQLServer
+                }
+                //Este if es necesario para no colocar la ultima ",".
                 if(resultSetCounter != attributeAmount){
                     createTableQuery += ", ";
                 }else createTableQuery += " ";
@@ -54,6 +63,7 @@ public class QueryCreator {
             createTableQuery += ")";
             createTableQuery += ";";
             resultSetCounter = 1;
+            System.out.println(createTableQuery);
             destination.executeQuery(createTableQuery);
             insertDataToMySQL(Entidades.getString(3),destination,connection); //Metodo para insertar la data
         }
@@ -82,12 +92,20 @@ public class QueryCreator {
             while(Atributos.next()){
                 createTableQuery += Atributos.getString(1) + " ";
                 createTableQuery += Atributos.getString(2);
+                //Revisar tamano de tipo
                 if(Atributos.getString(3) != null){
                     createTableQuery += "(" + Atributos.getString(3) + ")";
                 }
+                //Revisar si valor es NOT NULL
                 if("NO".equals(Atributos.getString(4))){
                    createTableQuery += " NOT NULL";
                 }
+                //Revisar si valor contiene DEFAULT
+                if(Atributos.getString(5) != null){
+                    createTableQuery += " DEFAULT ";
+                    createTableQuery += "'" + Atributos.getString(5) + "'";
+                }
+                //If usado para evitar agregar un ',' al final
                 if(resultSetCounter != attributeAmount){
                     createTableQuery += ", ";
                 }else createTableQuery += " ";
@@ -142,12 +160,14 @@ public class QueryCreator {
        
         controlBase destination = controlBase.getConexion(sqlserver);
         controlBase connection = controlBase.getConexion(mysql);
-
+        
+      
         ResultSet resultset = connection.getAllData(tableName);
         int column = 1;//contador usado para iterar sobre las columnas
         while(resultset.next()){
             String insertData = "INSERT INTO " + tableName + " VALUES (";
             ResultSet Atributos = connection.getAllAtributosDeTabla(tableName,"db"); //ResultSet usado para saber que tipo es el dato 
+            //Iteracion para poder recorrer todos los datos y no causar un "null pointer".
             while(true){
                 try{
                     Atributos.next();
