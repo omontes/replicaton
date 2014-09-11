@@ -63,7 +63,6 @@ public class QueryCreator {
             createTableQuery += ")";
             createTableQuery += ";";
             resultSetCounter = 1;
-            System.out.println(createTableQuery);
             destination.executeQuery(createTableQuery);
             insertDataToMySQL(Entidades.getString(3),destination,connection); //Metodo para insertar la data
         }
