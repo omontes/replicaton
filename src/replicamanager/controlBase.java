@@ -18,6 +18,7 @@ import java.util.logging.Logger;
  */
 public class controlBase extends connection_control {
      private static controlBase adminBD;
+     
     
     
      public controlBase(Connection conexion, Statement statement) throws SQLException {

@@ -5,7 +5,7 @@
  */
 
 package replicamanager;
-
+//mysqlserver2 = new MySqlConnectionFactory("localhost","root","123456","miBase2");
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
