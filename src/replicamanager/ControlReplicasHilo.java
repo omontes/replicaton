@@ -124,8 +124,21 @@ public class ControlReplicasHilo implements Runnable {
     
     }
      public void cambiarOrigen(){
-         this.controlRep.ColaReplica.add(this.controlRep.getBaseOrigen());
-         this.controlRep.setBaseOrigen(this.controlRep.ColaReplica.remove());
+        connection_control replicaAPromocionar = this.controlRep.ColaReplica.remove();
+        
+        
+        if (replicaAPromocionar.isEstado()) {
+            //Como la replica si esta activa se realiza el swap
+            //Inserta en la cola el origen actual  
+            this.controlRep.ColaReplica.add(this.controlRep.getBaseOrigen());
+            //Promociona dicha replica a base origen
+            this.controlRep.setBaseOrigen(replicaAPromocionar);
+        } else {
+            //Como la replica que saco de la lista esta pausada
+            //Vuelva a ingresarla en la cola de ultimo para que la prox vez
+            // siga con la siguiente de la cola
+            this.controlRep.ColaReplica.offer(replicaAPromocionar);
+        }
      }
      public void insertDataToReplicaMySQL(String tableName,int id,connection_control destination,connection_control connection) throws SQLException, IOException{
         
