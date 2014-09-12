@@ -9,6 +9,9 @@ package replicamanager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 /**
  *
@@ -16,21 +19,23 @@ import java.util.ArrayList;
  */
 public class ControlReplicas {
     private connection_control BaseOrigen;
-    ArrayList<connection_control> BasesReplicas = new ArrayList<connection_control>();
-   
+    PriorityQueue <connection_control> ColaReplica = new PriorityQueue();
+ 
     public ControlReplicas(){
         
     }
     
     public void agregarReplica(connection_control BaseReplica){
-        this.BasesReplicas.add(BaseReplica);
+        this.ColaReplica.add(BaseReplica);
     }
     
     
     private boolean existeReplicaPausada() {
         boolean existePausado = false;
-        for (int i = 0; i < BasesReplicas.size(); i++) {
-            if (!BasesReplicas.get(i).isEstado()) {
+        Iterator listaReplicas=ColaReplica.iterator();
+        while(listaReplicas.hasNext()){
+            connection_control miReplica = (connection_control)listaReplicas.next();
+            if (miReplica.isEstado()) {
                 existePausado= true;
             }
         }

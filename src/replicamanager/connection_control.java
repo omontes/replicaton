@@ -21,7 +21,7 @@ import java.sql.Statement;
  *
  * @author Oscar Montes
  */
-public class connection_control {
+public class connection_control implements Comparable {
     public Connection conection;
     public Statement statement;
     private static connection_control AdminBD;
@@ -248,6 +248,11 @@ public class connection_control {
     public void setEstado(boolean estado) {
         this.estado = estado;
         
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return 1;
     }
    
    

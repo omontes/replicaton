@@ -9,6 +9,7 @@ package replicamanager;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,6 +19,7 @@ import java.util.logging.Logger;
  */
 public class ControlReplicasHilo implements Runnable {
     ControlReplicas controlRep;
+    int controlOrigenes;
     public ControlReplicasHilo(ControlReplicas control){
         this.controlRep=control;
     }
@@ -55,6 +57,8 @@ public class ControlReplicasHilo implements Runnable {
                     }
 
                 }
+                this.cambiarOrigen();
+                
 
             } catch (SQLException ex) {
                 Logger.getLogger(ControlReplicasHilo.class.getName()).
@@ -67,13 +71,15 @@ public class ControlReplicasHilo implements Runnable {
     
     
     private void insertarReplicas(int id, String entidad) {
-        
-        for (int i = 0; i < this.controlRep.BasesReplicas.size(); i++) {
-            if (this.controlRep.BasesReplicas.get(i).isEstado()) {
+        Iterator listaReplicas=this.controlRep.ColaReplica.iterator();
+        while(listaReplicas.hasNext()){
+            connection_control miReplica = (connection_control)listaReplicas.next();
+            if (miReplica.isEstado()) {
                 try {
                     this.insertDataToReplicaMySQL(entidad,id,
-                            this.controlRep.BasesReplicas.get(i),
+                            miReplica,
                             this.controlRep.getBaseOrigen());
+                    miReplica.eliminarRegistroTablaEventos(id, entidad);
                 } catch (SQLException ex) {
                     Logger.getLogger(ControlReplicasHilo.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
@@ -82,19 +88,22 @@ public class ControlReplicasHilo implements Runnable {
                  
                
                
-            }
+            
         }
+    }
     }
     
     private boolean existeReplicaPausada() {
         boolean existePausado = false;
-        for (int i = 0; i < this.controlRep.BasesReplicas.size(); i++) {
-            if (!this.controlRep.BasesReplicas.get(i).isEstado()) {
+        Iterator listaReplicas=this.controlRep.ColaReplica.iterator();
+        while(listaReplicas.hasNext()){
+            connection_control miReplica = (connection_control)listaReplicas.next();
+            if (!miReplica.isEstado()) {
                 existePausado= true;
             }
         }
-        return existePausado;
-    }
+        return existePausado;}
+    
     
     private void intenteLimpiar(int id, String entidad){
         
@@ -112,7 +121,10 @@ public class ControlReplicasHilo implements Runnable {
     
     
     }
-    
+     public void cambiarOrigen(){
+         this.controlRep.ColaReplica.add(this.controlRep.getBaseOrigen());
+         this.controlRep.setBaseOrigen(this.controlRep.ColaReplica.remove());
+     }
      public void insertDataToReplicaMySQL(String tableName,int id,connection_control destination,connection_control connection) throws SQLException, IOException{
         
         ResultSet resultset = connection.getAllData(tableName,id);

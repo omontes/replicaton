@@ -651,7 +651,7 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
                /** Se crean los ids en tdas las tablas del origen **/
                triggerCreator.createIdQuery(origen);
                /** Se crean todos los triggers genericos en origen **/
-               triggerCreator.createTriggersQuery(origen);
+               triggerCreator.createTriggersQuerySql(origen);
            } 
            catch (SQLException ex) {
                Logger.getLogger(ReplicaManagerApp.class.getName()).log(Level.SEVERE, null, ex);

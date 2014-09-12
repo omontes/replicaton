@@ -21,8 +21,41 @@ import java.util.logging.Logger;
 public class TriggerCreator {
 
     PrintWriter query;
+    public void createTriggersQueryMysql(ConnectionFactory origen) throws SQLException, IOException {
+       
+        connection_control connection = controlBase.getConexion(origen);
+        ResultSet Entidades = connection.getAllTablas();
+        while (Entidades.next()) {
+            if (Entidades.getString(3).equals("LOGTABLE") || Entidades.getString(3).equals("HISTORYTABLE")) {
+                continue;
 
-    public void createTriggersQuery(ConnectionFactory origen) throws SQLException, IOException {
+            }
+            else{
+            String createTrigger = "";
+            createTrigger +="CREATE TRIGGER [dbo].[TRG_createLogTable_";
+            createTrigger+= Entidades.getString(3);
+            createTrigger+= "] ";
+            createTrigger+= "ON [dbo].[";
+            createTrigger+=Entidades.getString(3);
+            createTrigger+="]\n";
+            createTrigger+="AFTER INSERT AS\n";
+            createTrigger+="BEGIN\n";
+            createTrigger+="DECLARE @idControl int\n";
+            createTrigger+="DECLARE @nombrTabla NVARCHAR(128)\n";
+            createTrigger+="SELECT @idControl = i.idControl FROM INSERTED i\n";
+            createTrigger+="SELECT @nombrTabla = OBJECT_NAME(parent_object_id)\n";
+            createTrigger+="FROM sys.objects ";
+            createTrigger+="WHERE name = OBJECT_NAME(@@PROCID)\n";
+            createTrigger+="INSERT INTO LOGTABLE (id,tipoEvento,entidad,enable)\n";
+            createTrigger+="VALUES(@idControl,'Inserccion',@nombrTabla,'1')\n";
+            createTrigger+="END\n";
+         
+            connection.createDDL(createTrigger);
+        }
+        
+    }
+    }
+    public void createTriggersQuerySql(ConnectionFactory origen) throws SQLException, IOException {
        
         connection_control connection = controlBase.getConexion(origen);
         ResultSet Entidades = connection.getAllTablas();

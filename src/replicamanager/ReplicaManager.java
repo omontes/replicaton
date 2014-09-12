@@ -13,6 +13,8 @@ import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -36,16 +38,33 @@ public class ReplicaManager {
         adminBDc2.setEstado(false);
         new Thread(hilo).start();**/
       
+        QueryCreator test = new QueryCreator();
+        test.replicatetoSQLServer();
         
-        /**MySqlConnectionFactory company= 
-        new MySqlConnectionFactory("localhost","root","123456","company");
-        MySqlConnectionFactory company2= 
-        new MySqlConnectionFactory("localhost","root","123456","company2");
-        SqlServerConnectionFactory sqlserver =new SqlServerConnectionFactory("localhost","sa","123456","db");
+        SqlServerConnectionFactory R1= 
+        new SqlServerConnectionFactory("localhost","sa","123456","r1");
+        SqlServerConnectionFactory R2= 
+        new SqlServerConnectionFactory("localhost","sa","123456","r2");
+        SqlServerConnectionFactory sqlserver =new SqlServerConnectionFactory("localhost","sa","123456","db2");
        
-        controlBase adminBDC1 = controlBase.getConexion(company);
+        controlBase r1 = controlBase.getConexion(R1);
         controlBase adminBDOrigen = controlBase.getConexion(sqlserver);
-        controlBase adminBDc2 = controlBase.getConexion(company2);
+        controlBase r2 = controlBase.getConexion(R2);
+        ControlReplicas control = new ControlReplicas();
+        control.setBaseOrigen(adminBDOrigen);
+        
+        generarReplica(sqlserver,R1);
+        generarReplica(sqlserver,R2);
+        
+        control.agregarReplica(r2);
+        control.agregarReplica(r1);
+        
+        generarTriggers(sqlserver);
+        generarTriggers(R1);
+        generarTriggers(R2);
+        
+        ControlReplicasHilo hilo = new ControlReplicasHilo(control);
+        new Thread(hilo).start();
         //ResultSet rs =adminBD.consultarTablaEventos();**/
         //System.out.println(rs.next());
 
@@ -55,8 +74,8 @@ public class ReplicaManager {
         //new Thread(t).start();
         
         //No olvidar quitar el crearBase() en mysql Fabrica si no vacia la base
-        QueryCreator test = new QueryCreator();
-        test.replicatetoMySQL(new SqlServerConnectionFactory("localhost","sa","123456","db2"), new MySqlConnectionFactory("localhost","root","123456","db"));
+        
+        
         
         //HiloPrueba t = new HiloPrueba();
         //new Thread(t).start();
@@ -73,5 +92,34 @@ public class ReplicaManager {
         //new MySqlConnectionFactory("localhost","root","123456","db");
 
     }
+     public static void generarReplica(ConnectionFactory origen , ConnectionFactory destino){
+        try {
+            QueryCreator test = new QueryCreator();
+            test.replicatetoMySQL(origen,destino);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+    public static void generarTriggers(SqlServerConnectionFactory origen) {
+           try {
+               TriggerCreator triggerCreator = new TriggerCreator();
+               /**Se crea la tabla del control para replicas en origen **/
+               triggerCreator.crearLogTable(origen);
+               /**Se crea la tabla del historial en el origen **/
+               triggerCreator.crearHistoryTable(origen);
+               /** Se crea el trigger que llena el historial **/
+               triggerCreator.crearTriggerLogTable(origen);
+               /** Se crean los ids en tdas las tablas del origen **/
+               triggerCreator.createIdQuery(origen);
+               /** Se crean todos los triggers genericos en origen **/
+               triggerCreator.createTriggersQuerySql(origen);
+           } 
+           catch (SQLException ex) {
+               Logger.getLogger(ReplicaManagerApp.class.getName()).log(Level.SEVERE, null, ex);
+           } catch (IOException ex) {
+               Logger.getLogger(ReplicaManagerApp.class.getName()).log(Level.SEVERE, null, ex);
+           }
+    }
+    
     
 }
