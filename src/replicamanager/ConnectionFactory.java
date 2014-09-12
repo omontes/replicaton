@@ -17,5 +17,6 @@ public interface ConnectionFactory {
 
   Connection getConnectionFactory();
   public String getNombreBase();
+  public String getSchemaName();
 }
 

@@ -78,7 +78,7 @@ public class ControlReplicasHilo implements Runnable {
             connection_control miReplica = (connection_control)listaReplicas.next();
             if (miReplica.isEstado()) {
                 try {
-                    this.insertDataToReplicaMySQL(entidad,id,
+                    this.insertDataToReplica(entidad,id,
                             miReplica,
                             this.controlRep.getBaseOrigen());
                     miReplica.eliminarRegistroTablaEventos(id, entidad);
@@ -140,13 +140,13 @@ public class ControlReplicasHilo implements Runnable {
             this.controlRep.ColaReplica.offer(replicaAPromocionar);
         }
      }
-     public void insertDataToReplicaMySQL(String tableName,int id,connection_control destination,connection_control connection) throws SQLException, IOException{
+     public void insertDataToReplica(String tableName,int id,connection_control destination,connection_control connection) throws SQLException, IOException{
         
         ResultSet resultset = connection.getAllData(tableName,id);
         int column = 1;//contador usado para iterar sobre las columnas
         while(resultset.next()){
             String insertData = "INSERT INTO " + tableName + " VALUES (";
-            ResultSet Atributos = connection.getAllAtributosDeTabla(tableName,"dbo"); //ResultSet usado para saber que tipo es el dato 
+            ResultSet Atributos = connection.getAllAtributosDeTabla(tableName,connection.schemaName); //ResultSet usado para saber que tipo es el dato 
                      
             while(true){
                 try{

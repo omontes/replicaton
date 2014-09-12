@@ -28,7 +28,7 @@ public class MySqlConnectionFactory implements ConnectionFactory {
         this.user=user;
         this.pass=password;
         this.databaseName= name;
-        //this.crearBase();
+        this.crearBase();
     }
     public void crearBase(){
         String url = "";
@@ -80,7 +80,9 @@ public class MySqlConnectionFactory implements ConnectionFactory {
     
         return databaseName;
     }
-
+    public String getSchemaName(){
+        return databaseName;
+    }
    
     
 }

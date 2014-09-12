@@ -41,7 +41,7 @@ public class ReplicaManager {
         QueryCreator test = new QueryCreator();
         test.replicatetoSQLServer();
         
-        SqlServerConnectionFactory R1= 
+        /**SqlServerConnectionFactory R1= 
         new SqlServerConnectionFactory("localhost","sa","123456","r1");
         SqlServerConnectionFactory R2= 
         new SqlServerConnectionFactory("localhost","sa","123456","r2");

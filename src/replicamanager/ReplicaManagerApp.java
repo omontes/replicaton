@@ -480,41 +480,42 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
     }//GEN-LAST:event_despausarR2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-            try {
-                QueryCreator test = new QueryCreator();
-                test.replicatetoSQLServer();
+            
+                //Carga los datos puros en el origen
+                //QueryCreator test = new QueryCreator();
+                //test.replicatetoSQLServer();
                 
                 SqlServerConnectionFactory R1=
                         new SqlServerConnectionFactory("localhost","sa","123456","r1");
                 SqlServerConnectionFactory R2=
                         new SqlServerConnectionFactory("localhost","sa","123456","r2");
                 SqlServerConnectionFactory sqlserver =new SqlServerConnectionFactory("localhost","sa","123456","db2");
+                MySqlConnectionFactory miBase = new MySqlConnectionFactory("localhost","root","123456","miBase");
                 
                 connection_control r1 = connection_control.getConexion(R1);
                 connection_control adminBDOrigen = connection_control.getConexion(sqlserver);
                 connection_control r2 = connection_control.getConexion(R2);
+                connection_control mysql = connection_control.getConexion(miBase);
+               
                 control = new ControlReplicas();
                 control.setBaseOrigen(adminBDOrigen);
                 
                 generarReplica(sqlserver,R1);
                 generarReplica(sqlserver,R2);
+                generarReplica(sqlserver,miBase);
                 
                 control.agregarReplica(r2);
                 control.agregarReplica(r1);
+                control.agregarReplica(mysql);
                 
                 generarTriggers(sqlserver);
                 generarTriggers(R1);
                 generarTriggers(R2);
+                generarTriggers(miBase);
                 
                 hilo = new ControlReplicasHilo(control);
                 new Thread(hilo).start();
-            } catch (UnsupportedEncodingException ex) {
-                Logger.getLogger(ReplicaManagerApp.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (SQLException ex) {
-                Logger.getLogger(ReplicaManagerApp.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(ReplicaManagerApp.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            
     }//GEN-LAST:event_jButton1ActionPerformed
 
     
@@ -749,7 +750,27 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
             System.out.println(e);
         }
     }
-
+    private void generarTriggers(MySqlConnectionFactory origen) {
+          try {
+               TriggerCreator triggerCreator = new TriggerCreator();
+               /**Se crea la tabla del control para replicas en origen **/
+               triggerCreator.crearLogTable(origen);
+               /**Se crea la tabla del historial en el origen **/
+               triggerCreator.crearHistoryTable(origen);
+               /** Se crea el trigger que llena el historial **/
+               triggerCreator.crearTriggerLogTableMySQL(origen);
+               /** Se crean los ids en tdas las tablas del origen **/
+               triggerCreator.createIdQuery(origen);
+               /** Se crean todos los triggers genericos en origen **/
+               triggerCreator.createTriggersQuerySql(origen);
+           } 
+           catch (SQLException ex) {
+               Logger.getLogger(ReplicaManagerApp.class.getName()).log(Level.SEVERE, null, ex);
+           } catch (IOException ex) {
+               Logger.getLogger(ReplicaManagerApp.class.getName()).log(Level.SEVERE, null, ex);
+           }
+    }
+    
     private void generarTriggers(SqlServerConnectionFactory origen) {
            try {
                TriggerCreator triggerCreator = new TriggerCreator();

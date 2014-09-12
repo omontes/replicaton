@@ -30,12 +30,14 @@ public class connection_control implements Comparable {
     private static connection_control adminBD;
     private boolean estado;
     public String nombreBD;
+    public String schemaName;
    
-    public connection_control (Connection conexion, Statement statement, String nombreBD) {
+    public connection_control (Connection conexion, Statement statement, String nombreBD, String schemaName) {
         this.conection=conexion;
         this.statement=statement;
         this.setEstado(true);
         this.nombreBD = nombreBD;
+        this.schemaName= schemaName;
 
     }
     
@@ -266,7 +268,7 @@ public class connection_control implements Comparable {
     public static connection_control getConexion(ConnectionFactory fabrica) {
         Connection conexion = fabrica.getConnectionFactory();
         try {
-            adminBD = new connection_control(conexion,conexion.createStatement(),fabrica.getNombreBase());
+            adminBD = new connection_control(conexion,conexion.createStatement(),fabrica.getNombreBase(),fabrica.getSchemaName());
         } catch (SQLException ex) {
             Logger.getLogger(connection_control.class.getName()).log(Level.SEVERE, null, ex);
         }

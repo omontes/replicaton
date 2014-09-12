@@ -78,7 +78,6 @@ public class ControlReplicas {
         while(listaReplicas.hasNext()){
             
             connection_control miReplica = (connection_control)listaReplicas.next();
-            System.out.println(miReplica.nombreBD);
             if (miReplica.nombreBD.equals(NombreBDReplica)) {
                 try {
                     
@@ -90,7 +89,7 @@ public class ControlReplicas {
                         String entidad = datosActualizar.getString("entidad");
                         String tipoEvento = datosActualizar.getString("tipoEvento");
                         if (tipoEvento.equals("Inserccion")) {
-                             this.insertDataToReplicaSQLSERVER(entidad,id,miReplica,BaseOrigen);
+                             this.insertDataToReplica(entidad,id,miReplica,BaseOrigen);
                         // Se busca en las replicas si hay algo que deba de insertar
                              miReplica.eliminarRegistroTablaEventos(id, entidad);
                         }
@@ -100,18 +99,12 @@ public class ControlReplicas {
                     //Eliminar en el registro
                     
                     // Se activa la replica
-                    System.out.println("Antes de despausar");
-                    System.out.println(hilo.existeReplicaPausada());
-                    System.out.println(miReplica.isEstado());
+                   
                     miReplica.setEstado(true);
-                    System.out.println("Despues de despausar");
-                    System.out.println(miReplica.isEstado());
-                    System.out.println(hilo.existeReplicaPausada());
                     // Se borra los registros de tablas logevent
                     if (!hilo.existeReplicaPausada()) {
-                        System.out.println("entro a borrar");
+                        
                         this.getBaseOrigen().eliminarTablaEventos();
-         
                         this.borrarEnReplicas();
                         
                     }
@@ -139,14 +132,13 @@ public class ControlReplicas {
             connection_control replicaOrigen = (connection_control) listaReplicas.next();
             if (replicaOrigen.isEstado()) {
                 try {
-                    System.out.println("entro porque tengo que insertar en la replica");
                     ResultSet datosActualizar = replicaOrigen.consultarTablaEventos();
                     while (datosActualizar.next()) {
                         int id = datosActualizar.getInt("id");
                         String entidad = datosActualizar.getString("entidad");
                         String tipoEvento = datosActualizar.getString("tipoEvento");
                         if (tipoEvento.equals("Inserccion")) {
-                            this.insertDataToReplicaSQLSERVER(entidad,id,ReplicaparaInsertar,replicaOrigen);
+                            this.insertDataToReplica(entidad,id,ReplicaparaInsertar,replicaOrigen);
                             // Se busca en las replicas si hay algo que deba de insertar
                             ReplicaparaInsertar.eliminarRegistroTablaEventos(id, entidad);
                         }
@@ -170,13 +162,13 @@ public class ControlReplicas {
     }
     
     
-    public void insertDataToReplicaSQLSERVER(String tableName,int id,connection_control destination,connection_control connection) throws SQLException, IOException{
+    public void insertDataToReplica(String tableName,int id,connection_control destination,connection_control connection) throws SQLException, IOException{
         
         ResultSet resultset = connection.getAllData(tableName,id);
         int column = 1;//contador usado para iterar sobre las columnas
         while(resultset.next()){
             String insertData = "INSERT INTO " + tableName + " VALUES (";
-            ResultSet Atributos = connection.getAllAtributosDeTabla(tableName,"dbo"); //ResultSet usado para saber que tipo es el dato 
+            ResultSet Atributos = connection.getAllAtributosDeTabla(tableName,connection.schemaName); //ResultSet usado para saber que tipo es el dato 
                      
             while(true){
                 try{
@@ -204,6 +196,7 @@ public class ControlReplicas {
                     }
                 }catch(Exception e){
                     insertData += ");";
+                    System.out.println("Inserccion por despausa");
                     System.out.println(insertData);
                     destination.executeQuery(insertData);
                     insertData = "";

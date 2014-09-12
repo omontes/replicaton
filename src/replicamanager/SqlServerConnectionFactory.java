@@ -54,5 +54,9 @@ public class SqlServerConnectionFactory implements ConnectionFactory {
     
         return databaseName;
     }
+    
+     public String getSchemaName(){
+         return "dbo";
+     }
 
 }
