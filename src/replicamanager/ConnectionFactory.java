@@ -16,6 +16,6 @@ public interface ConnectionFactory {
    
 
   Connection getConnectionFactory();
-  
+  public String getNombreBase();
 }
 

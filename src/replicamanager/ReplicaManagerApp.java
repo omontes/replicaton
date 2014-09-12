@@ -25,6 +25,8 @@ import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import static replicamanager.ReplicaManager.generarReplica;
+import static replicamanager.ReplicaManager.generarTriggers;
 
 /**
  *
@@ -35,8 +37,12 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
     /**
      * Creates new form ReplicaManagerApp
      */
-     
-        
+        //Valores GLOBALES
+        ArrayList<ArrayList> listaReplicas  = new ArrayList<>();
+        int IdGlobalReplicas = 0;
+                
+        ControlReplicas control;  
+        ControlReplicasHilo hilo;
 //        
 //        MySqlConnectionFactory company= 
 //        new MySqlConnectionFactory("localhost","root","123456","company");
@@ -92,6 +98,9 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
         CB_SeleccionMotDestino3 = new javax.swing.JComboBox();
         CB_SeleccionMotDestino5 = new javax.swing.JComboBox();
         BTN_AceptarAgregarReplica = new javax.swing.JButton();
+        Pausar = new javax.swing.JButton();
+        despausarR2 = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
         Tab_VerReplicas = new javax.swing.JScrollPane();
         Tab_LogEventos = new javax.swing.JScrollPane();
         Tab_HistorialCRUD = new javax.swing.JScrollPane();
@@ -100,9 +109,7 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Replica Manager");
-        setMaximumSize(new java.awt.Dimension(1165, 495));
         setMinimumSize(new java.awt.Dimension(1165, 495));
-        setPreferredSize(new java.awt.Dimension(1165, 480));
         setResizable(false);
 
         Tab_ConjuntoTabs.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -216,33 +223,61 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
             }
         });
 
+        Pausar.setText("PausarR2");
+        Pausar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                PausarActionPerformed(evt);
+            }
+        });
+
+        despausarR2.setText("DespausarR2");
+        despausarR2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                despausarR2ActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText("PruebasOscar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout CB_SeleccionMotorDestinoLayout = new javax.swing.GroupLayout(CB_SeleccionMotorDestino);
         CB_SeleccionMotorDestino.setLayout(CB_SeleccionMotorDestinoLayout);
         CB_SeleccionMotorDestinoLayout.setHorizontalGroup(
             CB_SeleccionMotorDestinoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(CB_SeleccionMotorDestinoLayout.createSequentialGroup()
-                .addGroup(CB_SeleccionMotorDestinoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(CB_SeleccionMotorDestinoLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 448, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(CB_SeleccionMotorDestinoLayout.createSequentialGroup()
-                        .addGap(29, 29, 29)
-                        .addGroup(CB_SeleccionMotorDestinoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(CB_SeleccionMotorOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2))
-                        .addGap(57, 57, 57)
-                        .addGroup(CB_SeleccionMotorDestinoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel6)
-                            .addComponent(TF_IPOrigen, javax.swing.GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE)
-                            .addComponent(TF_UsuarioOrigen))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(CB_SeleccionMotorDestinoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(CB_SeleccionMotorDestinoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(CB_SeleccionMotorDestinoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(CB_SeleccionMotorDestinoLayout.createSequentialGroup()
+                            .addContainerGap()
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 448, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(CB_SeleccionMotorDestinoLayout.createSequentialGroup()
+                            .addGap(29, 29, 29)
+                            .addGroup(CB_SeleccionMotorDestinoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(CB_SeleccionMotorOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel2))
+                            .addGap(57, 57, 57)
                             .addGroup(CB_SeleccionMotorDestinoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jLabel8)
-                                .addComponent(TF_DBNameOrigen, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE))
-                            .addComponent(jLabel7)
-                            .addComponent(TF_PasswordOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(jLabel5)
+                                .addComponent(jLabel6)
+                                .addComponent(TF_IPOrigen, javax.swing.GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE)
+                                .addComponent(TF_UsuarioOrigen))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(CB_SeleccionMotorDestinoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(CB_SeleccionMotorDestinoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel8)
+                                    .addComponent(TF_DBNameOrigen, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE))
+                                .addComponent(jLabel7)
+                                .addComponent(TF_PasswordOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(CB_SeleccionMotorDestinoLayout.createSequentialGroup()
+                        .addGap(74, 74, 74)
+                        .addGroup(CB_SeleccionMotorDestinoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(despausarR2)
+                            .addComponent(Pausar)
+                            .addComponent(jButton1))))
                 .addGap(10, 10, 10)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -315,6 +350,12 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
                                         .addComponent(jLabel7)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(TF_PasswordOrigen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(36, 36, 36)
+                                .addComponent(Pausar)
+                                .addGap(18, 18, 18)
+                                .addComponent(despausarR2)
+                                .addGap(18, 18, 18)
+                                .addComponent(jButton1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                     .addGroup(CB_SeleccionMotorDestinoLayout.createSequentialGroup()
                         .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -371,25 +412,7 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
     }//GEN-END:initComponents
 
     
-    public void PintarVerReplicas(){
-        String ValorTemp = "";
- 
-        
-        String[] columnas_VerReplicas = new String[] { "Product Name" ,"Price" };
-        Object[][] filas_VerReplicas= new Object[][] { 
-                { "Galleta" ,"$80" }
-            };
-        
-        for(int i = 0; i < 5;i++){
-                
-                ValorTemp+= "Hola";
-                ValorTemp+= "\n\n";
-        }
-        JTable Tabla_VerReplicas= new JTable( filas_VerReplicas, columnas_VerReplicas);
-        Tabla_VerReplicas.setEnabled(false);
-        Tab_VerReplicas.getViewport().add(Tabla_VerReplicas );
-    }
-    
+
     
     
     
@@ -398,8 +421,9 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
     
     
     private void Tab_ConjuntoTabsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Tab_ConjuntoTabsMouseClicked
-      // PintarVerReplicas();
-        //GenerarDatosTabla();
+
+       GenerarDatosTabla();
+
     }//GEN-LAST:event_Tab_ConjuntoTabsMouseClicked
 
     private void CB_SeleccionMotDestino4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CB_SeleccionMotDestino4ActionPerformed
@@ -446,31 +470,79 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
          System.exit(0);
     }//GEN-LAST:event_BTN_SalirActionPerformed
 
+    private void PausarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PausarActionPerformed
+        control.pausarReplica("r2");
+        
+    }//GEN-LAST:event_PausarActionPerformed
+
+    private void despausarR2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_despausarR2ActionPerformed
+        control.despausarReplica("r2",hilo);
+    }//GEN-LAST:event_despausarR2ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+            try {
+                QueryCreator test = new QueryCreator();
+                test.replicatetoSQLServer();
+                
+                SqlServerConnectionFactory R1=
+                        new SqlServerConnectionFactory("localhost","sa","123456","r1");
+                SqlServerConnectionFactory R2=
+                        new SqlServerConnectionFactory("localhost","sa","123456","r2");
+                SqlServerConnectionFactory sqlserver =new SqlServerConnectionFactory("localhost","sa","123456","db2");
+                
+                connection_control r1 = connection_control.getConexion(R1);
+                connection_control adminBDOrigen = connection_control.getConexion(sqlserver);
+                connection_control r2 = connection_control.getConexion(R2);
+                control = new ControlReplicas();
+                control.setBaseOrigen(adminBDOrigen);
+                
+                generarReplica(sqlserver,R1);
+                generarReplica(sqlserver,R2);
+                
+                control.agregarReplica(r2);
+                control.agregarReplica(r1);
+                
+                generarTriggers(sqlserver);
+                generarTriggers(R1);
+                generarTriggers(R2);
+                
+                hilo = new ControlReplicasHilo(control);
+                new Thread(hilo).start();
+            } catch (UnsupportedEncodingException ex) {
+                Logger.getLogger(ReplicaManagerApp.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                Logger.getLogger(ReplicaManagerApp.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(ReplicaManagerApp.class.getName()).log(Level.SEVERE, null, ex);
+            }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     
     
 
-    public void GenerarDatosTabla(ControlReplicas control){
+    public void GenerarDatosTabla(){
         ButtonRenderer BR = new ButtonRenderer();
         ButtonEditor BE = new ButtonEditor(new JCheckBox());
         DefaultTableModel dm = new DefaultTableModel();
-
-        Object[][] ColumnasTabla = new Object[2][11];
-        int j;
-
-        //for (int i = 0; i < control.BasesReplicas.size(); i++) {
-       //    for (int i = 0; i < 10; i++){
-                
-        //   }
-       // }
-
+        if(IdGlobalReplicas != 0){
+        Object[][] ColumnasTabla = new Object[IdGlobalReplicas][11];
+        
+        
+        
+       
+        for(int i = 0; i < IdGlobalReplicas;i++){
+            for(int j = 0;j<11;j++){
+                ColumnasTabla[i][j] =  listaReplicas.get(i).get(j);
+            }
+        }
+        
         dm.setDataVector(ColumnasTabla, new Object[]{"IP Origen","Motor", "Nombre", "Usuario", "Password","IP Destino","Motor ", "Nombre ", "Usuario ", "Password ","Estado"});
 
         JTable table = new JTable(dm);
         table.getColumn("Estado").setCellRenderer(BR);
         table.getColumn("Estado").setCellEditor(BE);
-        //System.out.println(BE.ValorSeleccionado);
-
         Tab_VerReplicas.getViewport().add(table);
+        }
     }
 
     public int numeroReplicasIndicadas(){
@@ -492,6 +564,44 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
     }
     
     
+    private ArrayList<String> agregarInformacionReplicaBD(int idTabla){
+        ArrayList<String> replicaRetorno = new ArrayList<>();
+        String nameMotorDestino = "";
+        replicaRetorno.add(TF_IPOrigen.getText());
+        replicaRetorno.add((String)CB_SeleccionMotorOrigen.getSelectedItem());
+        replicaRetorno.add(TF_DBNameOrigen.getText());
+        replicaRetorno.add(TF_UsuarioOrigen.getText() );
+        replicaRetorno.add(TF_PasswordOrigen.getText());
+        replicaRetorno.add((String) TABLA_ReplicasDestino.getModel().getValueAt(idTabla, 0));
+        switch(idTabla){
+            case 0:
+                nameMotorDestino = (String)CB_SeleccionMotDestino1.getSelectedItem();
+                break;
+            case 1:
+                nameMotorDestino = (String)CB_SeleccionMotDestino2.getSelectedItem();
+                break;
+            case 2:
+                nameMotorDestino = (String)CB_SeleccionMotDestino3.getSelectedItem();
+                break;
+            case 3:
+                nameMotorDestino = (String)CB_SeleccionMotDestino4.getSelectedItem();
+                break;
+            case 4:
+                nameMotorDestino = (String)CB_SeleccionMotDestino5.getSelectedItem();
+                break;
+        }
+            
+        replicaRetorno.add(nameMotorDestino);
+        replicaRetorno.add((String) TABLA_ReplicasDestino.getModel().getValueAt(idTabla, 1));
+        replicaRetorno.add((String) TABLA_ReplicasDestino.getModel().getValueAt(idTabla, 2));
+        replicaRetorno.add((String) TABLA_ReplicasDestino.getModel().getValueAt(idTabla, 3));
+      
+        replicaRetorno.add("Play "+IdGlobalReplicas);  
+        IdGlobalReplicas++;
+        return replicaRetorno;
+    }
+    
+    
     
     private void crearConexion() {
         SqlServerConnectionFactory sqlserver = null;
@@ -508,64 +618,65 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
 
         if (numeroFilasCompletasReplicas != 0) {
             //Control
-            ControlReplicas control = new ControlReplicas();
+            control = new ControlReplicas();
             //Seleccion Origen
             if ("SQL Server".equals(String.valueOf(CB_SeleccionMotorOrigen.getSelectedItem()))) {
-                sqlserver = new SqlServerConnectionFactory(TF_IPOrigen.getText(), TF_UsuarioOrigen.getText(), TF_PasswordOrigen.getText(), TF_DBNameOrigen.getText());
-                control.setBaseOrigen(controlBase.getConexion(sqlserver));
+            //    sqlserver = new SqlServerConnectionFactory(TF_IPOrigen.getText(), TF_UsuarioOrigen.getText(), TF_PasswordOrigen.getText(), TF_DBNameOrigen.getText());
+            //    control.setBaseOrigen(controlBase.getConexion(sqlserver));
 
             } else if ("MySQL".equals(String.valueOf(CB_SeleccionMotorOrigen.getSelectedItem()))) {
                 mysqlserver = new MySqlConnectionFactory(TF_IPOrigen.getText(), TF_UsuarioOrigen.getText(), TF_PasswordOrigen.getText(), TF_DBNameOrigen.getText());
             }
 
-            for (int i = 0; i <= numeroFilasCompletasReplicas; i++) {
+            for (int i = 0; i < numeroFilasCompletasReplicas; i++) {
+               listaReplicas.add(agregarInformacionReplicaBD(i));          
                 switch (i) {
                     case 1:
                         if ("MySQL".equals(String.valueOf(CB_SeleccionMotDestino1.getSelectedItem()))) {
-                            mysqlserverR1 = new MySqlConnectionFactory((String)
-                                    TABLA_ReplicasDestino.getModel().getValueAt(0, 0),
-                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(0, 2),
-                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(0, 3),
-                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(0, 1));
+//                            mysqlserverR1 = new MySqlConnectionFactory((String)
+//                                    TABLA_ReplicasDestino.getModel().getValueAt(0, 0),
+//                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(0, 2),
+//                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(0, 3),
+//                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(0, 1));
                             break;
                         }
                     case 2:
                         if ("MySQL".equals(String.valueOf(CB_SeleccionMotDestino1.getSelectedItem()))) {
-                            mysqlserverR2 = new MySqlConnectionFactory((String) 
-                                    TABLA_ReplicasDestino.getModel().getValueAt(1, 0), 
-                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(1, 2),
-                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(1, 3),
-                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(1, 1));
+//                            mysqlserverR2 = new MySqlConnectionFactory((String) 
+//                                    TABLA_ReplicasDestino.getModel().getValueAt(1, 0), 
+//                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(1, 2),
+//                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(1, 3),
+//                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(1, 1));
                             break;
                         }
                         break;
                     case 3:
                         if ("MySQL".equals(String.valueOf(CB_SeleccionMotDestino1.getSelectedItem()))) {
-                            mysqlserverR3 = new MySqlConnectionFactory((String) 
-                                    TABLA_ReplicasDestino.getModel().getValueAt(2, 0),
-                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(2, 2),
-                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(2, 3),
-                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(2, 1));
+//                            mysqlserverR3 = new MySqlConnectionFactory((String) 
+//                                    TABLA_ReplicasDestino.getModel().getValueAt(2, 0),
+//                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(2, 2),
+//                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(2, 3),
+//                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(2, 1));
                             break;
                         }
                         break;
                     case 4:
                         if ("MySQL".equals(String.valueOf(CB_SeleccionMotDestino1.getSelectedItem()))) {
-                            mysqlserverR4 = new MySqlConnectionFactory((String) 
-                                    TABLA_ReplicasDestino.getModel().getValueAt(3, 0), 
-                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(3, 2),
-                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(3, 3),
-                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(3, 1));
+//                            mysqlserverR4 = new MySqlConnectionFactory((String) 
+//                                    TABLA_ReplicasDestino.getModel().getValueAt(3, 0), 
+//                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(3, 2),
+//                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(3, 3),
+//                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(3, 1));
                             break;
                         }
                         break;
                     case 5:
                         if ("MySQL".equals(String.valueOf(CB_SeleccionMotDestino1.getSelectedItem()))) {
-                            mysqlserverR5 =  new MySqlConnectionFactory((String) 
-                                    TABLA_ReplicasDestino.getModel().getValueAt(4, 0), 
-                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(4, 2),
-                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(4, 3),
-                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(4, 1));
+//                            mysqlserverR5 =  new MySqlConnectionFactory((String) 
+//                                    TABLA_ReplicasDestino.getModel().getValueAt(4, 0), 
+//                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(4, 2),
+//                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(4, 3),
+//                                    (String) TABLA_ReplicasDestino.getModel().getValueAt(4, 1));
                             break;
                         }
                         break;
@@ -575,51 +686,51 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
             switch (numeroFilasCompletasReplicas) {
                 case 1:
                     //Agrega los datos del origen:"sqlserver" al destino a replicar "mysqlserver"
-                    this.generarReplica(sqlserver, mysqlserverR1);
-                    control.agregarReplica(controlBase.getConexion(mysqlserverR1));
+//                    this.generarReplica(sqlserver, mysqlserverR1);
+//                    control.agregarReplica(controlBase.getConexion(mysqlserverR1));
                     break;
                 case 2:
-                    this.generarReplica(sqlserver, mysqlserverR1);
-                    this.generarReplica(sqlserver, mysqlserverR2);
-                    control.agregarReplica(controlBase.getConexion(mysqlserverR1));
-                    control.agregarReplica(controlBase.getConexion(mysqlserverR2));
+//                    this.generarReplica(sqlserver, mysqlserverR1);
+//                    this.generarReplica(sqlserver, mysqlserverR2);
+//                    control.agregarReplica(controlBase.getConexion(mysqlserverR1));
+//                    control.agregarReplica(controlBase.getConexion(mysqlserverR2));
                     break;
                 case 3:
-                    this.generarReplica(sqlserver, mysqlserverR1);
-                    this.generarReplica(sqlserver, mysqlserverR2);
-                    this.generarReplica(sqlserver, mysqlserverR3);
-                    control.agregarReplica(controlBase.getConexion(mysqlserverR1));
-                    control.agregarReplica(controlBase.getConexion(mysqlserverR2));
-                    control.agregarReplica(controlBase.getConexion(mysqlserverR3));
+//                    this.generarReplica(sqlserver, mysqlserverR1);
+//                    this.generarReplica(sqlserver, mysqlserverR2);
+//                    this.generarReplica(sqlserver, mysqlserverR3);
+//                    control.agregarReplica(controlBase.getConexion(mysqlserverR1));
+//                    control.agregarReplica(controlBase.getConexion(mysqlserverR2));
+//                    control.agregarReplica(controlBase.getConexion(mysqlserverR3));
                     break;
                 case 4:
-                    this.generarReplica(sqlserver, mysqlserverR1);
-                    this.generarReplica(sqlserver, mysqlserverR2);
-                    this.generarReplica(sqlserver, mysqlserverR3);
-                    this.generarReplica(sqlserver, mysqlserverR4);
-                    control.agregarReplica(controlBase.getConexion(mysqlserverR1));
-                    control.agregarReplica(controlBase.getConexion(mysqlserverR2));
-                    control.agregarReplica(controlBase.getConexion(mysqlserverR3));
-                    control.agregarReplica(controlBase.getConexion(mysqlserverR4));
+//                    this.generarReplica(sqlserver, mysqlserverR1);
+//                    this.generarReplica(sqlserver, mysqlserverR2);
+//                    this.generarReplica(sqlserver, mysqlserverR3);
+//                    this.generarReplica(sqlserver, mysqlserverR4);
+//                    control.agregarReplica(controlBase.getConexion(mysqlserverR1));
+//                    control.agregarReplica(controlBase.getConexion(mysqlserverR2));
+//                    control.agregarReplica(controlBase.getConexion(mysqlserverR3));
+//                    control.agregarReplica(controlBase.getConexion(mysqlserverR4));
                     break;
                 case 5:
-                    this.generarReplica(sqlserver, mysqlserverR1);
-                    this.generarReplica(sqlserver, mysqlserverR2);
-                    this.generarReplica(sqlserver, mysqlserverR3);
-                    this.generarReplica(sqlserver, mysqlserverR4);
-                    this.generarReplica(sqlserver, mysqlserverR5);
-                    control.agregarReplica(controlBase.getConexion(mysqlserverR1));
-                    control.agregarReplica(controlBase.getConexion(mysqlserverR2));
-                    control.agregarReplica(controlBase.getConexion(mysqlserverR3));
-                    control.agregarReplica(controlBase.getConexion(mysqlserverR4));
-                    control.agregarReplica(controlBase.getConexion(mysqlserverR5));
+//                    this.generarReplica(sqlserver, mysqlserverR1);
+//                    this.generarReplica(sqlserver, mysqlserverR2);
+//                    this.generarReplica(sqlserver, mysqlserverR3);
+//                    this.generarReplica(sqlserver, mysqlserverR4);
+//                    this.generarReplica(sqlserver, mysqlserverR5);
+//                    control.agregarReplica(controlBase.getConexion(mysqlserverR1));
+//                    control.agregarReplica(controlBase.getConexion(mysqlserverR2));
+//                    control.agregarReplica(controlBase.getConexion(mysqlserverR3));
+//                    control.agregarReplica(controlBase.getConexion(mysqlserverR4));
+//                    control.agregarReplica(controlBase.getConexion(mysqlserverR5));
                     break;
             }
             //Agrega los triggers al origen: "sqlserver"
-                this.generarTriggers(sqlserver);
+              //  this.generarTriggers(sqlserver);
                 //EMPIEZA LA ACCION SE PONE A EJECUTAR EL HILO
-            ControlReplicasHilo hilo = new ControlReplicasHilo(control);
-            new Thread(hilo).start();
+        //    ControlReplicasHilo hilo = new ControlReplicasHilo(control);
+        //    new Thread(hilo).start();
 
         } else {
             JOptionPane.showMessageDialog(null, "Al menos una replica debe estar completa");
@@ -738,15 +849,20 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
                 idReplica = Integer.parseInt(label.substring(6));
             }
             if (isPushed) {
-                  //  System.out.println("casasasasasa   "    +   "  *" + label.substring(5));
                     if(isPaused == false){
-                        
+                       String NombreBDReplica =listaReplicas.get(idReplica).get(6).toString();
+                       control.pausarReplica(NombreBDReplica);
                        label = "Pause " +idReplica;
+                       listaReplicas.get(idReplica).add(10,label);
                        isPaused = true;
                     }
                     else{
+                        String NombreBDReplica =listaReplicas.get(idReplica).get(6).toString();
+                        control.despausarReplica(NombreBDReplica,hilo);
                         isPaused = false;
                         label = "Play "+idReplica;
+                        listaReplicas.get(idReplica).add(10,label);
+                        
                     }
                     
             }
@@ -761,6 +877,10 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
 
         protected void fireEditingStopped() {
             super.fireEditingStopped();
+        }
+
+        private void obtenerNombreReplica(ArrayList get) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
     }
     
@@ -827,6 +947,7 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
     javax.swing.JPanel CB_SeleccionMotorDestino;
     javax.swing.JComboBox CB_SeleccionMotorOrigen;
     javax.swing.JLabel LB_Titulo;
+    javax.swing.JButton Pausar;
     javax.swing.JScrollPane ScrollTabla;
     javax.swing.JTable TABLA_ReplicasDestino;
     javax.swing.JTextField TF_DBNameOrigen;
@@ -837,6 +958,8 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
     javax.swing.JScrollPane Tab_HistorialCRUD;
     javax.swing.JScrollPane Tab_LogEventos;
     javax.swing.JScrollPane Tab_VerReplicas;
+    javax.swing.JButton despausarR2;
+    javax.swing.JButton jButton1;
     javax.swing.JLabel jLabel2;
     javax.swing.JLabel jLabel3;
     javax.swing.JLabel jLabel4;

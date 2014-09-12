@@ -6,12 +6,16 @@
 
 package replicamanager;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -19,7 +23,7 @@ import java.util.Queue;
  */
 public class ControlReplicas {
     private connection_control BaseOrigen;
-    PriorityQueue <connection_control> ColaReplica = new PriorityQueue();
+    ConcurrentLinkedQueue <connection_control> ColaReplica = new ConcurrentLinkedQueue();
  
     public ControlReplicas(){
         
@@ -42,18 +46,7 @@ public class ControlReplicas {
         return existePausado;
     }
     
-    public void despausarReplica(connection_control ReplicaParaDespausar) throws SQLException{
-        /***SE ACTUALIZA LA REPLICA *****/
-        //Se obtienen los datos para actualizar
-        ResultSet obtenerDatos = this.getBaseOrigen().consultarTablaEventos();
-        //Se actualiza la replica
-        ReplicaParaDespausar.actualizarReplica(obtenerDatos);
-        ReplicaParaDespausar.setEstado(true);
-        if(!existeReplicaPausada())
-            this.getBaseOrigen().eliminarTablaEventos();
-        
-    }
-
+  
     /**
      * @return the BaseOrigen
      */
@@ -68,6 +61,159 @@ public class ControlReplicas {
         this.BaseOrigen = BaseOrigen;
     }
     
-   
+    public void pausarReplica(String nombreReplica){
+        Iterator listaReplicas=ColaReplica.iterator();
+        while(listaReplicas.hasNext()){
+            connection_control miReplica = (connection_control)listaReplicas.next();
+            if (miReplica.nombreBD.equals(nombreReplica)) {
+                miReplica.setEstado(false);
+                
+            }
+        }
+    }
+
+    void despausarReplica(String NombreBDReplica, ControlReplicasHilo hilo) {
+        
+        Iterator listaReplicas=ColaReplica.iterator();
+        while(listaReplicas.hasNext()){
+            
+            connection_control miReplica = (connection_control)listaReplicas.next();
+            System.out.println(miReplica.nombreBD);
+            if (miReplica.nombreBD.equals(NombreBDReplica)) {
+                try {
+                    
+                    //Se obtienen los datos para actualizar
+                    ResultSet datosActualizar = this.getBaseOrigen().consultarTablaEventos();
+                    //Se actualiza la replica 
+                    while (datosActualizar.next()) {
+                        int id = datosActualizar.getInt("id");
+                        String entidad = datosActualizar.getString("entidad");
+                        String tipoEvento = datosActualizar.getString("tipoEvento");
+                        if (tipoEvento.equals("Inserccion")) {
+                             this.insertDataToReplicaSQLSERVER(entidad,id,miReplica,BaseOrigen);
+                        // Se busca en las replicas si hay algo que deba de insertar
+                             miReplica.eliminarRegistroTablaEventos(id, entidad);
+                        }
+                    }
+                    //Busca datos en las demas replicas
+                    this.buscarEventosEnReplicas(miReplica);
+                    //Eliminar en el registro
+                    
+                    // Se activa la replica
+                    System.out.println("Antes de despausar");
+                    System.out.println(hilo.existeReplicaPausada());
+                    System.out.println(miReplica.isEstado());
+                    miReplica.setEstado(true);
+                    System.out.println("Despues de despausar");
+                    System.out.println(miReplica.isEstado());
+                    System.out.println(hilo.existeReplicaPausada());
+                    // Se borra los registros de tablas logevent
+                    if (!hilo.existeReplicaPausada()) {
+                        System.out.println("entro a borrar");
+                        this.getBaseOrigen().eliminarTablaEventos();
+         
+                        this.borrarEnReplicas();
+                        
+                    }
+                    
+              
+                    
+                }
+                
+                catch (SQLException ex) {
+                    Logger.getLogger(ControlReplicas.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(ControlReplicas.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                    
+            }
+            
+        }
+       
+//new Thread(hilo).start();
+    }
+
+    private void buscarEventosEnReplicas(connection_control ReplicaparaInsertar) {
+        Iterator listaReplicas=ColaReplica.iterator();
+        while (listaReplicas.hasNext()) {
+            connection_control replicaOrigen = (connection_control) listaReplicas.next();
+            if (replicaOrigen.isEstado()) {
+                try {
+                    System.out.println("entro porque tengo que insertar en la replica");
+                    ResultSet datosActualizar = replicaOrigen.consultarTablaEventos();
+                    while (datosActualizar.next()) {
+                        int id = datosActualizar.getInt("id");
+                        String entidad = datosActualizar.getString("entidad");
+                        String tipoEvento = datosActualizar.getString("tipoEvento");
+                        if (tipoEvento.equals("Inserccion")) {
+                            this.insertDataToReplicaSQLSERVER(entidad,id,ReplicaparaInsertar,replicaOrigen);
+                            // Se busca en las replicas si hay algo que deba de insertar
+                            ReplicaparaInsertar.eliminarRegistroTablaEventos(id, entidad);
+                        }
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(ControlReplicas.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(ControlReplicas.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+        }
+    }
+
+    private void borrarEnReplicas() {
+        Iterator listaReplicasParaBorrar=ColaReplica.iterator();
+        while (listaReplicasParaBorrar.hasNext()) {
+                            connection_control replica = (connection_control) listaReplicasParaBorrar.next();
+                            replica.eliminarTablaEventos();
+                        }
+    }
     
+    
+    public void insertDataToReplicaSQLSERVER(String tableName,int id,connection_control destination,connection_control connection) throws SQLException, IOException{
+        
+        ResultSet resultset = connection.getAllData(tableName,id);
+        int column = 1;//contador usado para iterar sobre las columnas
+        while(resultset.next()){
+            String insertData = "INSERT INTO " + tableName + " VALUES (";
+            ResultSet Atributos = connection.getAllAtributosDeTabla(tableName,"dbo"); //ResultSet usado para saber que tipo es el dato 
+                     
+            while(true){
+                try{
+                    Atributos.next();
+                    String atributo = Atributos.getString(1);
+                    if(!atributo.equals("idControl")){
+                        
+                        if ("int".equals(Atributos.getString(2)) || null == resultset.getString(column)) {
+                            insertData += resultset.getString(column);
+                        } else {
+                            insertData += "'" + resultset.getString(column) + "'";
+                        }
+                        try {
+                            resultset.getString(column + 1);
+                            insertData += ", ";
+                        } catch (Exception e) {
+
+                        }
+                        column++;
+                    }
+                    else{
+                        //Tiene que quitar la ultima coma
+                        insertData=insertData.substring(0,insertData.length()-2);
+                        
+                    }
+                }catch(Exception e){
+                    insertData += ");";
+                    System.out.println(insertData);
+                    destination.executeQuery(insertData);
+                    insertData = "";
+                    break;
+                }
+            }
+            column = 1;
+        }
+    }
+    
+
+
 }

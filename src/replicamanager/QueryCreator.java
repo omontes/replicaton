@@ -24,8 +24,8 @@ public class QueryCreator {
     //Este metodo es usado para crear un query encargado de crear todas las tablas de SQLServer a MySQL
     public void replicatetoMySQL(ConnectionFactory origen, ConnectionFactory destino) throws FileNotFoundException, UnsupportedEncodingException, SQLException, IOException{
              
-        controlBase destination = controlBase.getConexion(destino);
-        controlBase connection = controlBase.getConexion(origen);
+        connection_control destination = connection_control.getConexion(destino);
+        connection_control connection = connection_control.getConexion(origen);
         
         /***Cambiar el nombre del schema ****/
         ResultSet Entidades = connection.getAllTablas();
@@ -76,8 +76,8 @@ public class QueryCreator {
         SqlServerConnectionFactory sqlserver =
                 new SqlServerConnectionFactory("localhost","sa","123456","db2");
        
-        controlBase destination = controlBase.getConexion(sqlserver);
-        controlBase connection = controlBase.getConexion(mysql);
+        connection_control destination = connection_control.getConexion(sqlserver);
+        connection_control connection = connection_control.getConexion(mysql);
      
         ResultSet Entidades = connection.getAllTablas();
         while(Entidades.next()){
@@ -118,7 +118,7 @@ public class QueryCreator {
         }
     }
     
-    public void insertDataToMySQL(String tableName,controlBase destination,controlBase connection) throws SQLException, IOException{
+    public void insertDataToMySQL(String tableName,connection_control destination,connection_control connection) throws SQLException, IOException{
         
         ResultSet resultset = connection.getAllData(tableName);
         int column = 1;//contador usado para iterar sobre las columnas
@@ -157,8 +157,8 @@ public class QueryCreator {
         SqlServerConnectionFactory sqlserver =
                 new SqlServerConnectionFactory("localhost","sa","123456","db2");
        
-        controlBase destination = controlBase.getConexion(sqlserver);
-        controlBase connection = controlBase.getConexion(mysql);
+        connection_control destination = connection_control.getConexion(sqlserver);
+        connection_control connection = connection_control.getConexion(mysql);
         
       
         ResultSet resultset = connection.getAllData(tableName);

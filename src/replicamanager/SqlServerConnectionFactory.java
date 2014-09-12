@@ -48,4 +48,11 @@ public class SqlServerConnectionFactory implements ConnectionFactory {
             return conection;
         
     }
+    
+       @Override
+    public String getNombreBase(){
+    
+        return databaseName;
+    }
+
 }

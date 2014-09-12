@@ -23,7 +23,7 @@ public class TriggerCreator {
     PrintWriter query;
     public void createTriggersQueryMysql(ConnectionFactory origen) throws SQLException, IOException {
        
-        connection_control connection = controlBase.getConexion(origen);
+        connection_control connection = connection_control.getConexion(origen);
         ResultSet Entidades = connection.getAllTablas();
         while (Entidades.next()) {
             if (Entidades.getString(3).equals("LOGTABLE") || Entidades.getString(3).equals("HISTORYTABLE")) {
@@ -57,7 +57,7 @@ public class TriggerCreator {
     }
     public void createTriggersQuerySql(ConnectionFactory origen) throws SQLException, IOException {
        
-        connection_control connection = controlBase.getConexion(origen);
+        connection_control connection = connection_control.getConexion(origen);
         ResultSet Entidades = connection.getAllTablas();
         while (Entidades.next()) {
             if (Entidades.getString(3).equals("LOGTABLE") || Entidades.getString(3).equals("HISTORYTABLE")) {
@@ -127,7 +127,7 @@ public class TriggerCreator {
     public void createIdQuery(ConnectionFactory origen) throws SQLException, IOException {
         
 
-        connection_control connection = controlBase.getConexion(origen);
+        connection_control connection = connection_control.getConexion(origen);
         ResultSet Entidades = connection.getAllTablas();
         while (Entidades.next()) {
             if(Entidades.getString(3).equals("LOGTABLE") || Entidades.getString(3).equals("HISTORYTABLE")){
@@ -158,7 +158,7 @@ public class TriggerCreator {
                 + "	entidad     VARCHAR(50),\n"
                 + "	enable      char(1)\n"
                 + ");";
-        connection_control connection = controlBase.getConexion(origen);
+        connection_control connection = connection_control.getConexion(origen);
         try {
             connection.createDDL(createLOGTABLE);
         } catch (IOException ex) {
@@ -182,7 +182,7 @@ public class TriggerCreator {
                 + "INSERT INTO HISTORYTABLE(id,tipoEvento,entidad,fecha)\n"
                 + "VALUES(@id,@tipoEvento,@entidad,CURRENT_TIMESTAMP)\n"
                 + "END";
-        connection_control connection = controlBase.getConexion(origen);
+        connection_control connection = connection_control.getConexion(origen);
         try {
             connection.createDDL(createTriggerLOGTABLE);
         } catch (IOException ex) {
@@ -198,7 +198,7 @@ public class TriggerCreator {
                 + "	entidad     VARCHAR(50),\n"
                 + "	fecha      DATETIME\n"
                 + ");";
-        connection_control connection = controlBase.getConexion(origen);
+        connection_control connection = connection_control.getConexion(origen);
         try {
             connection.createDDL(createHISTORYTABLE);
         } catch (IOException ex) {

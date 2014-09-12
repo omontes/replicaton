@@ -47,9 +47,9 @@ public class ReplicaManager {
         new SqlServerConnectionFactory("localhost","sa","123456","r2");
         SqlServerConnectionFactory sqlserver =new SqlServerConnectionFactory("localhost","sa","123456","db2");
        
-        controlBase r1 = controlBase.getConexion(R1);
-        controlBase adminBDOrigen = controlBase.getConexion(sqlserver);
-        controlBase r2 = controlBase.getConexion(R2);
+        connection_control r1 = connection_control.getConexion(R1);
+        connection_control adminBDOrigen = connection_control.getConexion(sqlserver);
+        connection_control r2 = connection_control.getConexion(R2);
         ControlReplicas control = new ControlReplicas();
         control.setBaseOrigen(adminBDOrigen);
         

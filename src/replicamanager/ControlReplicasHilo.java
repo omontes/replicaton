@@ -20,16 +20,18 @@ import java.util.logging.Logger;
 public class ControlReplicasHilo implements Runnable {
     ControlReplicas controlRep;
     int controlOrigenes;
+    boolean flag;
     public ControlReplicasHilo(ControlReplicas control){
         this.controlRep=control;
+        flag=true;
     }
 
     @Override
     public void run() {
         
-        while(true){
+        while(flag){
             try {
-                Thread.sleep(100);
+                Thread.sleep(300);
             } catch (InterruptedException ex) {
                 Logger.getLogger(ControlReplicasHilo.class.getName()).
                         log(Level.SEVERE, null, ex);
@@ -93,7 +95,7 @@ public class ControlReplicasHilo implements Runnable {
     }
     }
     
-    private boolean existeReplicaPausada() {
+    public boolean existeReplicaPausada() {
         boolean existePausado = false;
         Iterator listaReplicas=this.controlRep.ColaReplica.iterator();
         while(listaReplicas.hasNext()){
@@ -159,6 +161,7 @@ public class ControlReplicasHilo implements Runnable {
                     }
                 }catch(Exception e){
                     insertData += ");";
+                    System.out.println("Inserccion del hilo");
                     System.out.println(insertData);
                     destination.executeQuery(insertData);
                     insertData = "";

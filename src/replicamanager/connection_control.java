@@ -16,6 +16,9 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 /**
  *
@@ -24,14 +27,18 @@ import java.sql.Statement;
 public class connection_control implements Comparable {
     public Connection conection;
     public Statement statement;
-    private static connection_control AdminBD;
+    private static connection_control adminBD;
     private boolean estado;
+    public String nombreBD;
    
-    public connection_control () {
-        
+    public connection_control (Connection conexion, Statement statement, String nombreBD) {
+        this.conection=conexion;
+        this.statement=statement;
         this.setEstado(true);
+        this.nombreBD = nombreBD;
 
     }
+    
 
     
     private String readSql(String filePath) throws IOException {
@@ -256,6 +263,17 @@ public class connection_control implements Comparable {
     }
    
    
+    public static connection_control getConexion(ConnectionFactory fabrica) {
+        Connection conexion = fabrica.getConnectionFactory();
+        try {
+            adminBD = new connection_control(conexion,conexion.createStatement(),fabrica.getNombreBase());
+        } catch (SQLException ex) {
+            Logger.getLogger(connection_control.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return adminBD;
+    }
+    
     
    
 
