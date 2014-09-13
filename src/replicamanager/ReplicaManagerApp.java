@@ -40,7 +40,7 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
         //Valores GLOBALES
         ArrayList<ArrayList> listaReplicas  = new ArrayList<>();
         int IdGlobalReplicas = 0;
-                
+        Thread miHilo;        
         ControlReplicas control;  
         ControlReplicasHilo hilo;
 //        
@@ -445,7 +445,7 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
     }//GEN-LAST:event_PausarActionPerformed
 
     private void despausarR2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_despausarR2ActionPerformed
-        control.despausarReplica("r2",hilo);
+        control.despausarReplica("r2",hilo,miHilo);
     }//GEN-LAST:event_despausarR2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -714,7 +714,8 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
 
             //EMPIEZA LA ACCION SE PONE A EJECUTAR EL HILO
             hilo = new ControlReplicasHilo(control);
-            new Thread(hilo).start();
+            miHilo = new Thread(hilo);
+            miHilo.start();
 
         } else {
             JOptionPane.showMessageDialog(null, "Al menos una replica debe estar completa");
@@ -873,7 +874,7 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
                     }
                     else{
                         String NombreBDReplica =listaReplicas.get(idReplica).get(7).toString();
-                        control.despausarReplica(NombreBDReplica,hilo);
+                        control.despausarReplica(NombreBDReplica,hilo,miHilo);
                         isPaused = false;
                         label = "Play "+idReplica;
                         listaReplicas.get(idReplica).add(10,label);

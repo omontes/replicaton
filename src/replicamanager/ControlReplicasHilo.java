@@ -29,12 +29,11 @@ public class ControlReplicasHilo implements Runnable {
     @Override
     public void run() {
         
-        while(flag){
+        while (!Thread.currentThread().isInterrupted()) {
             try {
-                Thread.sleep(10);
+                Thread.sleep(300);
             } catch (InterruptedException ex) {
-                Logger.getLogger(ControlReplicasHilo.class.getName()).
-                        log(Level.SEVERE, null, ex);
+                Thread.currentThread().interrupt();
             }
             try {
                 
@@ -48,12 +47,12 @@ public class ControlReplicasHilo implements Runnable {
                     /**
                      * **LISTA DE EVENTOS ****
                      */
-
+                    
                     if (enable.charAt(0) == '1') {
-                       
+                        
                         if (tipoEvento.equals("Inserccion")) {
                             this.insertarReplicas(id, entidad);
-
+                            
                         }
                         this.intenteLimpiar(id, entidad);
                     }
@@ -61,14 +60,15 @@ public class ControlReplicasHilo implements Runnable {
                 }
                 this.cambiarOrigen();
                 
-
             } catch (SQLException ex) {
                 Logger.getLogger(ControlReplicasHilo.class.getName()).
                         log(Level.SEVERE, null, ex);
             }
-                
-            }
+            
         }
+
+        
+    }
 
     
     
