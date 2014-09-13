@@ -31,7 +31,7 @@ public class ControlReplicasHilo implements Runnable {
         
         while(flag){
             try {
-                Thread.sleep(300);
+                Thread.sleep(10);
             } catch (InterruptedException ex) {
                 Logger.getLogger(ControlReplicasHilo.class.getName()).
                         log(Level.SEVERE, null, ex);

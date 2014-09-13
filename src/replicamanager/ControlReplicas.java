@@ -67,8 +67,15 @@ public class ControlReplicas {
             connection_control miReplica = (connection_control)listaReplicas.next();
             if (miReplica.nombreBD.equals(nombreReplica)) {
                 miReplica.setEstado(false);
+                System.out.println("*********************************SI PAUSOOOOOOO*******************");
                 
             }
+        }
+        if(this.getBaseOrigen().nombreBD.equals(nombreReplica)){
+            this.getBaseOrigen().setEstado(false);
+            this.ColaReplica.offer(this.getBaseOrigen());
+            this.setBaseOrigen(this.ColaReplica.poll());
+            System.out.println("**************************SI PAUSOOOOOOO ERA ORIGEN*******************");
         }
     }
 
@@ -101,6 +108,7 @@ public class ControlReplicas {
                     // Se activa la replica
                    
                     miReplica.setEstado(true);
+                    System.out.println("*********************************SI DESPAUSOOOOOOO*******************");
                     // Se borra los registros de tablas logevent
                     if (!hilo.existeReplicaPausada()) {
                         

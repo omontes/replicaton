@@ -37,9 +37,14 @@ public class ReplicaManager {
         ControlReplicasHilo hilo = new ControlReplicasHilo(control);
         adminBDc2.setEstado(false);
         new Thread(hilo).start();**/
-      
+        SqlServerConnectionFactory db2= 
+        new SqlServerConnectionFactory("localhost","sa","123456","db2");
+       
+        MySqlConnectionFactory mysqlserver =new MySqlConnectionFactory("localhost","db");
+        connection_control db = connection_control.getConexion(mysqlserver);
+        connection_control Db2 = connection_control.getConexion(db2);
         QueryCreator test = new QueryCreator();
-        test.replicatetoSQLServer();
+        test.replicatetoSQLServer(db,Db2);
         
         /**SqlServerConnectionFactory R1= 
         new SqlServerConnectionFactory("localhost","sa","123456","r1");

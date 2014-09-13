@@ -30,6 +30,15 @@ public class MySqlConnectionFactory implements ConnectionFactory {
         this.databaseName= name;
         this.crearBase();
     }
+    
+     MySqlConnectionFactory(String ip,String name){
+        this.ip=ip;
+        this.user="root";
+        this.pass="123456";
+        this.databaseName= name;
+        this.obtenerConexionOrigen();
+    }
+    
     public void crearBase(){
         String url = "";
           url+= "jdbc:mysql://"
@@ -45,6 +54,25 @@ public class MySqlConnectionFactory implements ConnectionFactory {
             String crearBase ="CREATE DATABASE "+databaseName;
             statement.executeUpdate(dropDatabaseSiExiste);
             statement.executeUpdate(crearBase);
+        } catch (Exception e) {
+            System.out.println("Error al crear base "
+                    + e.toString());
+            JOptionPane.showMessageDialog(null,
+                    "No se pudo crear la base de datos.");
+
+        }
+    }
+    public void obtenerConexionOrigen(){
+        String url = "";
+          url+= "jdbc:mysql://"
+                  + ip+":3306"
+                  ;
+            Connection conection = null;
+            try {
+            Class.forName(driver);
+            conection=(DriverManager.getConnection(url,user, pass));
+            
+
         } catch (Exception e) {
             System.out.println("Error al crear base "
                     + e.toString());

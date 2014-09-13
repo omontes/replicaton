@@ -69,25 +69,23 @@ public class QueryCreator {
     }
     
      //Este metodo es usado para crear un query encargado de crear todas las tablas de MySQL a SQLServer
-    public void replicatetoSQLServer() throws FileNotFoundException, UnsupportedEncodingException, SQLException, IOException{
+    public void replicatetoSQLServer(connection_control origen,connection_control destino) throws FileNotFoundException, UnsupportedEncodingException, SQLException, IOException{
         
-         MySqlConnectionFactory mysql= 
-        new MySqlConnectionFactory("localhost","root","123456","db");
-        SqlServerConnectionFactory sqlserver =
-                new SqlServerConnectionFactory("localhost","sa","123456","db2");
+        System.out.println("entro a replicar porque origen es mysql");
+        System.out.println(origen.schemaName);
        
-        connection_control destination = connection_control.getConexion(sqlserver);
-        connection_control connection = connection_control.getConexion(mysql);
+        connection_control destination = destino;
+        connection_control connection = origen;
      
         ResultSet Entidades = connection.getAllTablas();
         while(Entidades.next()){
             String createTableQuery = "";
             int resultSetCounter = 1; //Posicion actual
-            int attributeAmount = this.getResultSetSize(connection.getAllAtributosDeTabla(Entidades.getString(3),"db"));//Cantidad de Atributos
+            int attributeAmount = this.getResultSetSize(connection.getAllAtributosDeTabla(Entidades.getString(3),origen.schemaName));//Cantidad de Atributos
             createTableQuery += "CREATE TABLE ";
             createTableQuery +=  Entidades.getString(3);
             createTableQuery += " ( ";
-            ResultSet Atributos = connection.getAllAtributosDeTabla(Entidades.getString(3),"db");
+            ResultSet Atributos = connection.getAllAtributosDeTabla(Entidades.getString(3),origen.schemaName);
             while(Atributos.next()){
                 createTableQuery += Atributos.getString(1) + " ";
                 createTableQuery += Atributos.getString(2);
@@ -114,7 +112,7 @@ public class QueryCreator {
             createTableQuery += ";";
             resultSetCounter = 1;
             destination.executeQuery(createTableQuery);
-            insertDataSQLServer(Entidades.getString(3)); //Metodo para insertar la data
+            insertDataSQLServer(Entidades.getString(3),origen,destino); //Metodo para insertar la data
         }
     }
     
@@ -151,26 +149,42 @@ public class QueryCreator {
         }
     }
     
-    public void insertDataSQLServer(String tableName) throws SQLException, IOException{
-        MySqlConnectionFactory mysql= 
-        new MySqlConnectionFactory("localhost","root","123456","db");
-        SqlServerConnectionFactory sqlserver =
-                new SqlServerConnectionFactory("localhost","sa","123456","db2");
+    public void insertDataSQLServer(String tableName, connection_control origen, connection_control destino) throws SQLException, IOException{
+     
        
-        connection_control destination = connection_control.getConexion(sqlserver);
-        connection_control connection = connection_control.getConexion(mysql);
+        connection_control destination = destino;
+        connection_control connection = origen;
         
       
         ResultSet resultset = connection.getAllData(tableName);
         int column = 1;//contador usado para iterar sobre las columnas
         while(resultset.next()){
-            String insertData = "INSERT INTO " + tableName + " VALUES (";
-            ResultSet Atributos = connection.getAllAtributosDeTabla(tableName,"db"); //ResultSet usado para saber que tipo es el dato 
+            
+            String insertData = "INSERT INTO " + tableName + "(";
+            ResultSet Atributos = connection.getAllAtributosDeTabla(tableName, connection.schemaName); //ResultSet usado para saber que tipo es el dato 
+            while (Atributos.next()) {
+                String atributo = Atributos.getString(1);
+               
+
+                    insertData += ""+atributo+"";;
+                    insertData += ",";
+
+                    column++;
+                 
+                   
+
+                }
+             //Tiene que quitar la ultima coma
+            insertData = insertData.substring(0, insertData.length() - 1);
+            
+            insertData += ") VALUES(";
+            column = 1;
+            ResultSet Atributos2 = connection.getAllAtributosDeTabla(tableName,connection.schemaName); //ResultSet usado para saber que tipo es el dato 
             //Iteracion para poder recorrer todos los datos y no causar un "null pointer".
             while(true){
                 try{
-                    Atributos.next();
-                    if("int".equals(Atributos.getString(2))||null == resultset.getString(column)){
+                    Atributos2.next();
+                    if("int".equals(Atributos2.getString(2))||null == resultset.getString(column)){
                         insertData += resultset.getString(column);
                     }else{
                         insertData += "'" + resultset.getString(column) + "'";
@@ -184,6 +198,8 @@ public class QueryCreator {
                     column++;
                 }catch(Exception e){
                     insertData += ");";
+                    System.out.println("inserccion de replica");
+                    System.out.println(insertData);
                     destination.executeQuery(insertData);
                     insertData = "";
                     break;
