@@ -74,7 +74,7 @@ public class ControlReplicas {
         if(this.getBaseOrigen().nombreBD.equals(nombreReplica)){
             this.getBaseOrigen().setEstado(false);
             this.ColaReplica.offer(this.getBaseOrigen());
-            this.setBaseOrigen(this.ColaReplica.poll());
+            this.setBaseOrigen(this.ColaReplica.remove());
             System.out.println("**************************SI PAUSOOOOOOO ERA ORIGEN*******************");
         }
     }

@@ -851,14 +851,17 @@ public class ReplicaManagerApp extends javax.swing.JFrame {
         }
 
         public Object getCellEditorValue() {
+            String isPausedString = "";
             if(label.startsWith("Play")){
               idReplica = Integer.parseInt(label.substring(5));
+              isPausedString = label.substring(0,4);
             }
             else if(label.startsWith("Pause")){
                 idReplica = Integer.parseInt(label.substring(6));
+                isPausedString = label.substring(0,5);
             }
             if (isPushed) {
-                    if(isPaused == false){
+                    if("Play".equals(isPausedString)){
                         
                        String NombreBDReplica =listaReplicas.get(idReplica).get(7).toString();
                        control.pausarReplica(NombreBDReplica);
