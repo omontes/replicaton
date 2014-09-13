@@ -80,7 +80,7 @@ public class ControlReplicas {
     }
 
     void despausarReplica(String NombreBDReplica, ControlReplicasHilo hilo, Thread miHilo) {
-        miHilo.interrupt();
+        miHilo.suspend();
         Iterator listaReplicas=ColaReplica.iterator();
         while(listaReplicas.hasNext()){
             
@@ -126,8 +126,8 @@ public class ControlReplicas {
                 } catch (IOException ex) {
                     Logger.getLogger(ControlReplicas.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                miHilo= new Thread(hilo);
-                miHilo.start();
+                //miHilo= new Thread(hilo);
+                miHilo.resume();
                 
             }
             
