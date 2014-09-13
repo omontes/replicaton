@@ -144,17 +144,34 @@ public class ControlReplicasHilo implements Runnable {
         
         ResultSet resultset = connection.getAllData(tableName,id);
         int column = 1;//contador usado para iterar sobre las columnas
+        
         while(resultset.next()){
-            String insertData = "INSERT INTO " + tableName + " VALUES (";
-            ResultSet Atributos = connection.getAllAtributosDeTabla(tableName,connection.schemaName); //ResultSet usado para saber que tipo es el dato 
-                     
+            String insertData = "INSERT INTO " + tableName + "(";
+            ResultSet Atributos = connection.getAllAtributosDeTabla(tableName, connection.schemaName); //ResultSet usado para saber que tipo es el dato 
+            while (Atributos.next()) {
+                String atributo = Atributos.getString(1);
+                if (!atributo.equals("idControl")) {
+
+                    insertData += ""+atributo+"";;
+                    insertData += ",";
+
+                    column++;
+                } else {
+                    //Tiene que quitar la ultima coma
+                    insertData = insertData.substring(0, insertData.length() - 1);
+
+                }
+            }
+            insertData += ") VALUES(";
+            column = 1;
+            ResultSet Atributos2 = connection.getAllAtributosDeTabla(tableName, connection.schemaName); //ResultSet usado para saber que tipo es el dato 
             while(true){
                 try{
-                    Atributos.next();
-                    String atributo = Atributos.getString(1);
+                    Atributos2.next();
+                    String atributo = Atributos2.getString(1);
                     if(!atributo.equals("idControl")){
                         
-                        if ("int".equals(Atributos.getString(2)) || null == resultset.getString(column)) {
+                        if ("int".equals(Atributos2.getString(2)) || null == resultset.getString(column)) {
                             insertData += resultset.getString(column);
                         } else {
                             insertData += "'" + resultset.getString(column) + "'";

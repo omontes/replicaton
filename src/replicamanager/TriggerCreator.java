@@ -73,12 +73,8 @@ public class TriggerCreator {
             createTrigger+="\n";
             createTrigger+= "FOR EACH ROW\n";
             createTrigger +="BEGIN\n";
-            createTrigger+="DECLARE nombreTabla NVARCHAR(128);\n";
-            createTrigger+="SET nombreTabla = (SELECT OBJECT_NAME(parent_object_id)\n";
-            createTrigger+="FROM sys.objects ";
-            createTrigger+="WHERE name = OBJECT_NAME(PROCID));\n";
             createTrigger+="INSERT INTO LOGTABLE (id,tipoEvento,entidad,enable)\n";
-            createTrigger+="VALUES(NEW.idControl,'Inserccion',nombreTabla,'1');\n";
+            createTrigger+="VALUES(NEW.idControl,'Inserccion','"+Entidades.getString(3)+"','1');\n";
             createTrigger+="END\n";
             System.out.println(createTrigger);
             /***
@@ -202,7 +198,7 @@ public class TriggerCreator {
                 createidControl += "ALTER TABLE ";
                 createidControl += Entidades.getString(3);
                 createidControl += " ";
-                createidControl += "add column idControl INT NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST\n";
+                createidControl += "add column idControl INT NOT NULL AUTO_INCREMENT PRIMARY KEY\n";
                 connection.executeQuery(createidControl);
             }
         }
